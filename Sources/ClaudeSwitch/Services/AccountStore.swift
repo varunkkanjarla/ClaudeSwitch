@@ -44,7 +44,7 @@ final class AccountStore: ObservableObject {
 
     func deleteAccount(_ account: ClaudeAccount) {
         accounts.removeAll { $0.id == account.id }
-        save(); statusMessage = "Removed \(account.name). Only its ClaudeSwitch metadata was removed; external sessions and Code data were not touched."
+        save(); statusMessage = "Removed \(account.name). Only its ClaudeSwitch metadata was removed; its Desktop profile and Claude Code data were preserved."
     }
 
     func codeDirectory(for account: ClaudeAccount) -> URL {
