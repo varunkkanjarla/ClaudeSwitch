@@ -14,8 +14,8 @@ enum DesktopProfileDetector {
             throw NSError(domain: "ClaudeSwitch", code: 1, userInfo: [NSLocalizedDescriptionKey: "Could not inspect process list"])
         }
         var result: [UUID: [Int32]] = [:]
-        for line in text.split(whereSeparator: \\.isNewline) {
-            let p = line.split(maxSplits: 1, whereSeparator: \\.isWhitespace)
+        for line in text.split(whereSeparator: \.isNewline) {
+            let p = line.split(maxSplits: 1, whereSeparator: \.isWhitespace)
             guard p.count == 2, let pid = Int32(p[0]) else { continue }
             let cmd = String(p[1]), lower = cmd.lowercased()
             guard !lower.contains("--type="), lower.contains(".app/contents/macos/"), lower.contains("claude") else { continue }
