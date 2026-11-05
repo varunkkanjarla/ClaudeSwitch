@@ -16,8 +16,9 @@ final class DesktopProfileRuntime: ObservableObject {
         })
         refresh()
         if timer == nil {
-            timer = Timer.scheduledTimer(withTimeInterval: 4, repeats: true) { [weak self] _ in
-                Task { @MainActor in self?.refresh() }
+            let runtime = self
+            timer = Timer.scheduledTimer(withTimeInterval: 4, repeats: true) { _ in
+                Task { @MainActor in runtime.refresh() }
             }
         }
     }
