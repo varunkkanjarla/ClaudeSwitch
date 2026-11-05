@@ -3,6 +3,7 @@ import AppKit
 
 struct MenuBarView: View {
     @EnvironmentObject private var store: AccountStore
+    @StateObject private var desktopRuntime = DesktopProfileRuntime()
     @Environment(\.openWindow) private var openWindow
 
     var body: some View {
@@ -14,7 +15,7 @@ struct MenuBarView: View {
                     .buttonStyle(.borderless).help("Settings and account management")
             }
             Divider()
-            Text("Desktop opens the app's current login. CLI keeps a separate configuration per account.")
+            Text("Desktop uses an isolated profile per account. Verify the signed-in identity inside Claude Desktop.")
                 .font(.caption2).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
             if store.accounts.isEmpty {
                 ContentUnavailableView("No accounts yet", systemImage: "person.crop.circle.badge.plus", description: Text("Add your first account in ClaudeSwitch settings."))
@@ -27,11 +28,12 @@ struct MenuBarView: View {
                                 Text(account.name).font(.subheadline.weight(.semibold))
                                 Text(account.email.isEmpty ? (account.tag.isEmpty ? "Claude account" : account.tag) : account.email)
                                     .font(.caption).foregroundStyle(.secondary).lineLimit(1)
+                                Text(desktopRuntime.status(for: account)).font(.caption2).foregroundStyle(.secondary).lineLimit(2)
                             }
                             Spacer()
                         }
                         HStack(spacing: 8) {
-                            Button { Launcher.openDesktop(account: account, store: store) } label: { Label("Desktop", systemImage: "macwindow") }
+                            Button { Launcher.openDesktop(account: account, store: store, runtime: desktopRuntime) } label: { Label("Desktop", systemImage: "macwindow") }
                             Button { Launcher.openCode(account: account, store: store) } label: { Label("CLI", systemImage: "terminal") }
                             if store.showBrowserOption {
                                 Button { Launcher.openWeb(account: account, store: store) } label: { Label("Browser", systemImage: "globe") }
@@ -52,6 +54,7 @@ struct MenuBarView: View {
         }
         .padding(14).frame(width: 340)
         .onAppear {
+            desktopRuntime.configure(accounts: store.accounts, baseDirectory: store.baseDirectory)
             if !store.onboardingCompleted { openWindow(id: "onboarding") }
         }
     }

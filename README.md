@@ -8,6 +8,8 @@ ClaudeSwitch is a local-first macOS menu-bar utility for keeping named Claude en
 
 - Menu-bar popover with configurable accounts (Work, Personal, Company, Client A, Lab, or any labels users choose).
 - Per-account **Desktop** and **CLI** launch actions.
+- Experimental Claude Desktop profile isolation using a separate Electron user-data directory per account.
+- Local process detection that reports running profile PIDs without inspecting the signed-in Claude identity.
 - Claude Code CLI launches with a dedicated `CLAUDE_CONFIG_DIR` for each ClaudeSwitch account and the account's selected working directory.
 - Optional **Browser** action. It is hidden by default and can be enabled in Settings. It opens the user's existing browser profile and does not create independent browser sessions.
 - First-run welcome screen, account management, optional manual update checks, and privacy-safe diagnostics export.
@@ -33,7 +35,7 @@ The app is a menu-bar app. Click its menu-bar icon to open the account switcher;
 
 1. Launch ClaudeSwitch and complete the welcome screen.
 2. Add an account with a label, optional tag/email, icon, colour and CLI working folder.
-3. Click **Desktop** to open the installed Claude Desktop application. It uses the app's current signed-in identity.
+3. Click **Desktop**. ClaudeSwitch launches the account's isolated local profile. Sign in separately inside that profile and verify the identity in Claude Desktop.
 4. Click **CLI** to open Terminal with that account's dedicated `CLAUDE_CONFIG_DIR`. Authenticate with Claude Code on first use.
 5. Optionally enable Browser in Settings to expose the browser action in account cards.
 
@@ -41,11 +43,11 @@ The app is a menu-bar app. Click its menu-bar icon to open the account switcher;
 
 | Action | Behaviour | Independent login? |
 |---|---|---|
-| Desktop | Opens the installed Claude Desktop app | No; uses the app's existing login |
+| Desktop | Launches Claude Desktop with an account-specific Electron user-data directory | Experimental; sign in separately and verify identity inside each window |
 | CLI | Starts `claude` with an account-specific `CLAUDE_CONFIG_DIR` | Separate CLI configuration/auth context; authenticate each one |
 | Browser (optional) | Opens `claude.ai` in the selected browser | No; uses that browser profile's current login |
 
-ClaudeSwitch never reads, copies, exports or manages Claude passwords, cookies or tokens. Claude Code itself manages authentication inside each configuration directory.
+ClaudeSwitch never reads, copies, exports or manages Claude passwords, cookies or tokens. Desktop profile directories are created under `ClaudeSwitch/DesktopProfiles/<account-id>/` with owner-only directory permissions. Removing an account preserves its profile data. Claude Code itself manages authentication inside each configuration directory.
 
 ## Data and privacy
 
@@ -89,10 +91,11 @@ QA                                macOS beta test checklist
 
 ## Known limitations
 
-- Claude Desktop's account session is shared with the installed Desktop app. The Desktop button does not log out or switch identities.
+- Desktop isolation relies on Electron's `--user-data-dir` argument and must be validated against each Claude Desktop release. Process detection confirms profile association only, not the signed-in identity.
 - Browser mode uses the browser's current profile. It cannot keep two Claude logins independent inside one profile.
 - Claude Code CLI requires a working `claude` command in the user's Terminal PATH. Some shell environments may need PATH setup in the user's shell profile.
 - Terminal automation may trigger a macOS permission prompt. Company MDM policy can block Apple Events, unsigned apps or app installation.
+- Desktop isolation depends on Electron's `--user-data-dir` argument and must be regression-tested after Claude Desktop updates. Process detection confirms profile association only, not the signed-in identity.
 - The project must be compiled, exercised and signed on macOS. Linux source parsing is not a substitute for macOS validation.
 
 ## License
