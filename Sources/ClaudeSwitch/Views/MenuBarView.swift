@@ -15,7 +15,7 @@ struct MenuBarView: View {
                     .buttonStyle(.borderless).help("Settings and account management")
             }
             Divider()
-            Text("Desktop opens the app's current login. CLI keeps a separate configuration per account.")
+            Text("Desktop uses an isolated profile per account. Verify the signed-in identity inside Claude Desktop.")
                 .font(.caption2).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
             if store.accounts.isEmpty {
                 ContentUnavailableView("No accounts yet", systemImage: "person.crop.circle.badge.plus", description: Text("Add your first account in ClaudeSwitch settings."))
