@@ -42,25 +42,13 @@ enum Launcher {
     }
 
     static func openDesktop(account: ClaudeAccount, store: AccountStore, runtime: DesktopProfileRuntime? = nil) {
-        let bundleIDs = ["com.anthropic.claudefordesktop", "com.anthropic.Claude"]
-        let bundleMatch = bundleIDs.compactMap { NSWorkspace.shared.urlForApplication(withBundleIdentifier: $0) }.first
-        let localCandidates = [
-            "/Applications/Claude.app",
-            (NSHomeDirectory() as NSString).appendingPathComponent("Applications/Claude.app"),
-            "/Applications/Claude Desktop.app"
-        ].map { URL(fileURLWithPath: $0, isDirectory: true) }
-        let pathMatch = localCandidates.first { FileManager.default.fileExists(atPath: $0.path) }
-        guard let appURL = bundleMatch ?? pathMatch else {
+        guard let appURL = desktopAppURL() else {
             store.updateStatus("Claude Desktop was not found. Install the official macOS app first.")
             return
         }
 
         if account.useExistingSetup {
-            NSWorkspace.shared.openApplication(at: appURL, configuration: NSWorkspace.OpenConfiguration()) { _, error in
-                Task { @MainActor in
-                    store.updateStatus(error.map { "Claude Desktop launch failed: \($0.localizedDescription)" } ?? "Opened Claude Desktop with your existing profile for \(account.name).")
-                }
-            }
+            openDefaultDesktop(store: store, launchedMessage: "Opened Claude Desktop with your existing profile for \(account.name).")
             return
         }
 
@@ -94,6 +82,61 @@ enum Launcher {
         } catch {
             store.updateStatus("Could not prepare Desktop profile for " + account.name + ": " + error.localizedDescription)
         }
+    }
+
+    /// Opens the default-profile Desktop. A new instance is required: with only isolated profiles running,
+    /// a plain open would just activate one of those instead.
+    static func openDefaultDesktop(store: AccountStore, launchedMessage: String = "Reopened your main Claude Desktop.") {
+        guard let appURL = desktopAppURL() else {
+            store.updateStatus("Claude Desktop was not found. Install the official macOS app first.")
+            return
+        }
+        let profiles = store.accounts.map { (account: $0, profile: store.desktopProfileDirectory(for: $0)) }
+        if let running = (try? DesktopProfileDetector.runningDesktops(profiles: profiles))?.first(where: \.isDefaultProfile) {
+            running.app.activate(options: [.activateAllWindows])
+            store.updateStatus("Activated your main Claude Desktop.")
+            return
+        }
+        let configuration = NSWorkspace.OpenConfiguration()
+        configuration.createsNewApplicationInstance = true
+        NSWorkspace.shared.openApplication(at: appURL, configuration: configuration) { _, error in
+            Task { @MainActor in
+                store.updateStatus(error.map { "Claude Desktop launch failed: \($0.localizedDescription)" } ?? launchedMessage)
+            }
+        }
+    }
+
+    /// Every other Claude Desktop that could receive the claude:// sign-in link meant for this account's profile.
+    static func competingDesktops(for account: ClaudeAccount, store: AccountStore) throws -> [RunningDesktop] {
+        let profiles = store.accounts.map { (account: $0, profile: store.desktopProfileDirectory(for: $0)) }
+        return try DesktopProfileDetector.runningDesktops(profiles: profiles).filter { $0.accountID != account.id }
+    }
+
+    /// Quits the given Desktops normally (never force-quits), then opens this account's profile so it is the only
+    /// Claude running when the browser hands back the sign-in link. Returns false if any instance would not quit.
+    static func beginDesktopSignIn(account: ClaudeAccount, store: AccountStore, runtime: DesktopProfileRuntime?, closing: [RunningDesktop]) async -> Bool {
+        closing.forEach { _ = $0.app.terminate() }
+        let deadline = Date().addingTimeInterval(15)
+        while closing.contains(where: { !$0.app.isTerminated }), Date() < deadline {
+            try? await Task.sleep(for: .milliseconds(250))
+        }
+        let stillRunning = closing.filter { !$0.app.isTerminated }.map(\.label)
+        guard stillRunning.isEmpty else {
+            store.updateStatus("Sign-in stopped: " + stillRunning.joined(separator: ", ") + " did not quit. Close it yourself (check for an open prompt), then try again.")
+            return false
+        }
+        openDesktop(account: account, store: store, runtime: runtime)
+        return true
+    }
+
+    private static func desktopAppURL() -> URL? {
+        let bundleMatch = DesktopProfileDetector.desktopBundleIDs.compactMap { NSWorkspace.shared.urlForApplication(withBundleIdentifier: $0) }.first
+        let localCandidates = [
+            "/Applications/Claude.app",
+            (NSHomeDirectory() as NSString).appendingPathComponent("Applications/Claude.app"),
+            "/Applications/Claude Desktop.app"
+        ].map { URL(fileURLWithPath: $0, isDirectory: true) }
+        return bundleMatch ?? localCandidates.first { FileManager.default.fileExists(atPath: $0.path) }
     }
 
     private static func browserURL(named name: String) -> URL? {

@@ -41,8 +41,46 @@ final class DesktopProfileRuntime: ObservableObject {
     }
 }
 
+/// A running Claude Desktop main process and which profile it uses.
+struct RunningDesktop {
+    let app: NSRunningApplication
+    let label: String
+    let accountID: UUID?
+    let isDefaultProfile: Bool
+}
+
 enum DesktopProfileDetector {
+    static let desktopBundleIDs = ["com.anthropic.claudefordesktop", "com.anthropic.Claude"]
+
     static func runningProcessIDs(_ profiles: [UUID: URL]) throws -> [UUID: [Int32]] {
+        var matches: [UUID: [Int32]] = [:]
+        for (pid, command) in try desktopCommands() {
+            for (accountID, profileURL) in profiles where command.contains(profileArgument(profileURL)) {
+                matches[accountID, default: []].append(pid)
+            }
+        }
+        return matches.mapValues { Array(Set($0)).sorted() }
+    }
+
+    /// Claude Desktop instances found by bundle ID, so ClaudeSwitch's own process is never matched.
+    static func runningDesktops(profiles: [(account: ClaudeAccount, profile: URL)]) throws -> [RunningDesktop] {
+        let commands = try desktopCommands()
+        return desktopBundleIDs.flatMap { NSRunningApplication.runningApplications(withBundleIdentifier: $0) }.map { app in
+            let command = commands[app.processIdentifier] ?? ""
+            if let match = profiles.first(where: { command.contains(profileArgument($0.profile)) }) {
+                return RunningDesktop(app: app, label: match.account.name, accountID: match.account.id, isDefaultProfile: false)
+            }
+            let isDefault = !command.contains("--user-data-dir=")
+            return RunningDesktop(app: app, label: isDefault ? "Main Claude Desktop" : "Another Claude Desktop profile", accountID: nil, isDefaultProfile: isDefault)
+        }
+    }
+
+    private static func profileArgument(_ profileURL: URL) -> String {
+        "--user-data-dir=" + profileURL.standardizedFileURL.path
+    }
+
+    /// Command lines of Claude main processes (renderer and GPU helpers excluded), keyed by PID.
+    private static func desktopCommands() throws -> [Int32: String] {
         let process = Process()
         let pipe = Pipe()
         process.executableURL = URL(fileURLWithPath: "/bin/ps")
@@ -57,7 +95,7 @@ enum DesktopProfileDetector {
                           userInfo: [NSLocalizedDescriptionKey: "Could not inspect the macOS process list."])
         }
 
-        var matches: [UUID: [Int32]] = [:]
+        var commands: [Int32: String] = [:]
         for line in listing.split(whereSeparator: \.isNewline) {
             let parts = line.split(maxSplits: 1, whereSeparator: \.isWhitespace)
             guard parts.count == 2, let pid = Int32(parts[0]) else { continue }
@@ -65,14 +103,8 @@ enum DesktopProfileDetector {
             let lower = command.lowercased()
             guard !lower.contains("--type="),
                   lower.contains("claude") else { continue }
-
-            for (accountID, profileURL) in profiles {
-                let argument = "--user-data-dir=" + profileURL.standardizedFileURL.path
-                if command.contains(argument) {
-                    matches[accountID, default: []].append(pid)
-                }
-            }
+            commands[pid] = command
         }
-        return matches.mapValues { Array(Set($0)).sorted() }
+        return commands
     }
 }
