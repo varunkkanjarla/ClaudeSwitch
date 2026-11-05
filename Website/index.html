@@ -1,55 +1,920 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="description" content="ClaudeSwitch is a local-first macOS menu bar app for launching Claude Desktop and Claude Code CLI across named workspaces.">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="ClaudeSwitch is a sleek, local-first macOS menu bar companion for switching Claude Desktop and Claude Code CLI across isolated workspaces.">
   <title>ClaudeSwitch — Your Claude workspaces, one switch away</title>
   <style>
-    :root{color-scheme:dark;--bg:#090b10;--panel:#11151e;--panel2:#171d29;--text:#f5f7fb;--muted:#a1aaba;--line:#283142;--blue:#8db4ff;--green:#9be3c0;--max:1120px}
-    *{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% -20%,#24365c 0,transparent 48%),var(--bg);color:var(--text);font:16px/1.6 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
-    a{color:inherit;text-decoration:none}.wrap{width:min(var(--max),calc(100% - 40px));margin:auto}.nav{height:76px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #ffffff12}.brand{font-size:20px;font-weight:750;letter-spacing:-.5px;display:flex;gap:10px;align-items:center}.mark{width:32px;height:32px;border-radius:10px;background:linear-gradient(140deg,#9dc0ff,#627eea);display:grid;place-items:center;color:#10172b;font-weight:900}.navlinks{display:flex;gap:24px;color:var(--muted);font-size:14px}.hero{padding:104px 0 76px;text-align:center}.eyebrow{color:var(--green);font-size:13px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase}.hero h1{font-size:clamp(42px,7vw,76px);line-height:1.04;letter-spacing:-3px;max-width:850px;margin:20px auto}.hero p{color:var(--muted);font-size:19px;max-width:670px;margin:0 auto 28px}.actions{display:flex;justify-content:center;gap:12px;flex-wrap:wrap}.btn{padding:12px 19px;border-radius:12px;background:#e9efff;color:#10172b;font-weight:750;display:inline-flex;gap:9px;align-items:center}.btn.secondary{background:#171e2b;color:#e9efff;border:1px solid var(--line)}.hint{font-size:12px;color:#8792a5;margin-top:14px}.preview{max-width:770px;margin:0 auto;background:linear-gradient(150deg,#1b2433,#10141d);border:1px solid #3a455b;border-radius:22px;padding:18px;box-shadow:0 28px 90px #0009;text-align:left}.windowbar{display:flex;gap:7px;padding:2px 2px 16px;border-bottom:1px solid var(--line)}.dot{width:9px;height:9px;border-radius:50%;background:#536078}.apphead{display:flex;align-items:center;justify-content:space-between;padding:16px 2px}.apphead strong{font-size:17px}.account{display:flex;align-items:center;gap:13px;padding:15px;background:#ffffff08;border:1px solid #ffffff0d;border-radius:15px;margin-top:10px}.avatar{width:40px;height:40px;border-radius:12px;background:#315c9d;display:grid;place-items:center;color:#d9e8ff;font-weight:800}.avatar.purple{background:#55417e}.acctmeta{flex:1}.acctmeta b{display:block}.acctmeta small{color:var(--muted)}.chip{font-size:12px;padding:7px 11px;background:#283449;border-radius:8px;color:#dbe7ff}.sections{padding:62px 0}.sectiontitle{text-align:center;font-size:34px;letter-spacing:-1px;margin:0 0 10px}.sub{text-align:center;color:var(--muted);max-width:650px;margin:0 auto 32px}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}.feature,.step{padding:23px;background:var(--panel);border:1px solid var(--line);border-radius:17px}.feature .ico{font-size:23px}.feature h3{margin:12px 0 6px}.feature p,.step p{color:var(--muted);font-size:14px;margin:0}.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.num{color:var(--blue);font-weight:800;font-size:13px}.step h3{font-size:16px;margin:8px 0}.privacy{background:linear-gradient(120deg,#121b25,#10151f);border:1px solid var(--line);border-radius:22px;padding:34px;display:grid;grid-template-columns:1.1fr .9fr;gap:30px}.privacy h2{font-size:30px;line-height:1.15;margin:0 0 12px}.privacy p{color:var(--muted)}.checks{display:grid;gap:12px;align-content:center}.checks div:before{content:'✓';color:var(--green);font-weight:900;margin-right:10px}.faq{max-width:780px;margin:auto}.faq details{border-bottom:1px solid var(--line);padding:17px 0}.faq summary{font-weight:700;cursor:pointer}.faq p{color:var(--muted);font-size:14px}.footer{border-top:1px solid var(--line);padding:28px 0;color:var(--muted);font-size:13px;display:flex;justify-content:space-between;gap:15px;flex-wrap:wrap}
-    @media(max-width:760px){.hero{padding:72px 0 55px}.hero h1{letter-spacing:-1.7px}.grid,.steps{grid-template-columns:1fr}.privacy{grid-template-columns:1fr}.navlinks{gap:12px}.navlinks a:nth-child(2){display:none}.account{flex-wrap:wrap}.chip{margin-left:53px}}
+    :root {
+      color-scheme: dark;
+      --bg: #080a0f;
+      --panel: #111520;
+      --panel-hover: #161b2a;
+      --panel-card: #181f30;
+      --text: #f5f7fc;
+      --muted: #9aa5b8;
+      --muted-dark: #647087;
+      --line: #222b3d;
+      --line-bright: rgba(255, 255, 255, 0.12);
+      --blue: #5b95ff;
+      --blue-glow: rgba(91, 149, 255, 0.25);
+      --green: #34d399;
+      --purple: #a78bfa;
+      --amber: #fbbf24;
+      --max: 1140px;
+      --radius: 16px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: radial-gradient(ellipse at 50% -10%, #1e2e4e 0%, transparent 55%), var(--bg);
+      color: var(--text);
+      font: 15px/1.6 -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Segoe UI", Roboto, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: inherit; text-decoration: none; }
+    .wrap { width: min(var(--max), calc(100% - 40px)); margin: auto; }
+
+    /* Navigation */
+    .nav {
+      height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--line);
+    }
+    .brand {
+      font-size: 19px;
+      font-weight: 700;
+      letter-spacing: -0.4px;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+    .mark {
+      width: 32px;
+      height: 32px;
+      border-radius: 9px;
+      background: linear-gradient(135deg, #7baaff, #4c6ef5);
+      display: grid;
+      place-items: center;
+      color: #0b1120;
+      font-weight: 900;
+      font-size: 17px;
+      box-shadow: 0 4px 14px var(--blue-glow);
+    }
+    .navlinks { display: flex; gap: 24px; color: var(--muted); font-size: 14px; font-weight: 500; align-items: center; }
+    .navlinks a:hover { color: var(--text); }
+    .nav-btn {
+      padding: 7px 14px;
+      border-radius: 8px;
+      background: #ffffff10;
+      border: 1px solid var(--line-bright);
+      color: var(--text);
+      font-size: 13px;
+      transition: all 0.2s;
+    }
+    .nav-btn:hover { background: #ffffff1c; }
+
+    /* Hero */
+    .hero { padding: 80px 0 60px; text-align: center; }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--green);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      background: rgba(52, 211, 153, 0.1);
+      border: 1px solid rgba(52, 211, 153, 0.25);
+      padding: 6px 14px;
+      border-radius: 99px;
+      margin-bottom: 22px;
+    }
+    .eyebrow-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); }
+    .hero h1 {
+      font-size: clamp(42px, 6.5vw, 72px);
+      line-height: 1.06;
+      letter-spacing: -2.5px;
+      max-width: 880px;
+      margin: 0 auto 20px;
+      font-weight: 800;
+    }
+    .gradient-text {
+      background: linear-gradient(135deg, #a3c4ff 0%, #6892ff 50%, #b898ff 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero p {
+      color: var(--muted);
+      font-size: 19px;
+      max-width: 680px;
+      margin: 0 auto 32px;
+      font-weight: 400;
+      line-height: 1.55;
+    }
+
+    /* Actions & Brew */
+    .actions { display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; margin-bottom: 24px; }
+    .btn {
+      padding: 13px 22px;
+      border-radius: 12px;
+      background: #f0f4ff;
+      color: #0b1120;
+      font-weight: 700;
+      font-size: 15px;
+      display: inline-flex;
+      gap: 9px;
+      align-items: center;
+      box-shadow: 0 4px 20px rgba(91, 149, 255, 0.28);
+      transition: all 0.2s ease;
+    }
+    .btn:hover { background: #ffffff; transform: translateY(-1px); box-shadow: 0 6px 24px rgba(91, 149, 255, 0.4); }
+    .btn.secondary {
+      background: #141b2a;
+      color: #e5edff;
+      border: 1px solid var(--line);
+      box-shadow: none;
+    }
+    .btn.secondary:hover { background: #1c263b; border-color: var(--line-bright); }
+
+    /* Homebrew Terminal Snippet */
+    .brew-wrap {
+      max-width: 580px;
+      margin: 0 auto 16px;
+      background: #0d121c;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 8px 10px 8px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+    }
+    .brew-code {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 13.5px;
+      color: #c7d5ee;
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+    .brew-prompt { color: var(--green); font-weight: 700; user-select: none; }
+    .copy-btn {
+      background: #1c2538;
+      color: #e2eafc;
+      border: 1px solid var(--line-bright);
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+    }
+    .copy-btn:hover { background: #283550; color: #fff; }
+    .copy-btn.copied { background: rgba(52, 211, 153, 0.18); color: var(--green); border-color: var(--green); }
+    .hint { font-size: 13px; color: var(--muted-dark); }
+
+    /* UI Showcase Component */
+    .showcase {
+      margin: 48px auto 0;
+      max-width: 860px;
+    }
+    .ui-tabs {
+      display: inline-flex;
+      background: #121824;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 4px;
+      gap: 4px;
+      margin-bottom: 24px;
+    }
+    .ui-tab {
+      padding: 8px 18px;
+      border-radius: 9px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--muted);
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      transition: all 0.2s;
+    }
+    .ui-tab.active {
+      background: #202a3d;
+      color: #ffffff;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+    }
+
+    /* Screen Frame */
+    .screen-container {
+      background: #0d121c;
+      border: 1px solid #28344c;
+      border-radius: 20px;
+      box-shadow: 0 30px 100px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.05);
+      overflow: hidden;
+      text-align: left;
+    }
+
+    /* macOS Top Menu Bar Strip */
+    .mac-menubar {
+      height: 32px;
+      background: rgba(22, 29, 44, 0.85);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 14px;
+      font-size: 12.5px;
+      font-weight: 500;
+      color: #d1d9e8;
+      user-select: none;
+    }
+    .mac-left { display: flex; align-items: center; gap: 16px; }
+    .apple-icon { font-size: 14px; color: #fff; font-weight: 700; }
+    .mac-right { display: flex; align-items: center; gap: 14px; font-size: 12px; }
+    .menu-active-icon {
+      background: #3b82f6;
+      color: #ffffff;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      box-shadow: 0 2px 6px rgba(59, 130, 246, 0.4);
+    }
+
+    /* Popover UI View */
+    .popover-stage {
+      padding: 24px;
+      background: radial-gradient(circle at 80% 20%, #17243c 0%, #0d131f 60%);
+      display: flex;
+      justify-content: flex-end;
+      min-height: 520px;
+    }
+    .mac-popover {
+      width: 360px;
+      background: #151c2a;
+      border: 1px solid #32405a;
+      border-radius: 14px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(255, 255, 255, 0.08);
+      overflow: hidden;
+      position: relative;
+    }
+    .popover-header {
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--line);
+    }
+    .popover-title {
+      font-size: 14px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .popover-settings {
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 14px;
+      padding: 4px;
+      border-radius: 6px;
+    }
+    .popover-notice {
+      padding: 9px 14px;
+      font-size: 11.5px;
+      color: var(--muted);
+      background: #0f1420;
+      border-bottom: 1px solid var(--line);
+      line-height: 1.45;
+    }
+    .account-list { padding: 10px; display: flex; flex-direction: column; gap: 8px; }
+    .acc-item {
+      background: #1b2436;
+      border: 1px solid #28364e;
+      border-radius: 10px;
+      padding: 10px 12px;
+      transition: all 0.15s ease;
+    }
+    .acc-item:hover { border-color: #3b4e72; background: #202b40; }
+    .acc-top { display: flex; align-items: center; gap: 10px; margin-bottom: 9px; }
+    .acc-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      font-size: 14px;
+    }
+    .acc-avatar.blue { background: #2563eb; color: #fff; }
+    .acc-avatar.purple { background: #7c3aed; color: #fff; }
+    .acc-avatar.green { background: #059669; color: #fff; }
+    .acc-info { flex: 1; }
+    .acc-name { font-size: 13.5px; font-weight: 700; color: #f0f4ff; }
+    .acc-sub { font-size: 11px; color: var(--muted); }
+    .acc-path { font-size: 10.5px; color: #7686a2; font-family: ui-monospace, monospace; }
+    .acc-btns { display: flex; gap: 7px; }
+    .action-pill {
+      flex: 1;
+      padding: 5px 8px;
+      background: #27344c;
+      border: 1px solid #364867;
+      border-radius: 6px;
+      color: #e2ecff;
+      font-size: 11.5px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      cursor: pointer;
+    }
+    .action-pill:hover { background: #334464; color: #fff; }
+    .popover-footer {
+      padding: 10px 14px;
+      border-top: 1px solid var(--line);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      color: var(--muted);
+      background: #111724;
+    }
+    .pop-btn { color: #8fa1c4; cursor: pointer; text-decoration: none; }
+    .pop-btn:hover { color: #fff; }
+
+    /* Dashboard Window UI View */
+    .dashboard-stage {
+      display: none;
+      min-height: 520px;
+      background: #101624;
+    }
+    .dash-window {
+      display: flex;
+      min-height: 520px;
+    }
+    .dash-sidebar {
+      width: 220px;
+      background: #141b2b;
+      border-right: 1px solid var(--line);
+      padding: 16px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .window-traffic { display: flex; gap: 7px; margin-bottom: 12px; padding-left: 4px; }
+    .dot { width: 11px; height: 11px; border-radius: 50%; }
+    .dot.red { background: #ff5f56; }
+    .dot.yellow { background: #ffbd2e; }
+    .dot.green { background: #27c93f; }
+    .sidebar-section-title { font-size: 11px; font-weight: 700; color: #5f708c; text-transform: uppercase; letter-spacing: 0.8px; padding-left: 8px; }
+    .sidebar-item {
+      padding: 7px 10px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #b0bfd8;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+    .sidebar-item.active { background: #2563eb; color: #fff; }
+    .dash-content {
+      flex: 1;
+      padding: 24px 28px;
+      overflow-y: auto;
+    }
+    .dash-title { font-size: 22px; font-weight: 800; margin-bottom: 4px; }
+    .dash-desc { font-size: 13px; color: var(--muted); margin-bottom: 20px; }
+    .dash-card {
+      background: #172133;
+      border: 1px solid #283750;
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin-bottom: 14px;
+    }
+    .dash-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    .dash-card-title { font-size: 14.5px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+    .dash-card-badge {
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 6px;
+      background: #233149;
+      color: #9cb3db;
+      font-weight: 600;
+    }
+    .dash-field {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .dash-field code {
+      background: #0f1624;
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: #8db5ff;
+      font-family: ui-monospace, monospace;
+    }
+
+    /* Sections */
+    .sections { padding: 80px 0; border-top: 1px solid var(--line); }
+    .sectiontitle { text-align: center; font-size: 36px; font-weight: 800; letter-spacing: -1.2px; margin-bottom: 12px; }
+    .sub { text-align: center; color: var(--muted); max-width: 620px; margin: 0 auto 42px; font-size: 17px; }
+    
+    /* Features Grid */
+    .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+    .feature {
+      padding: 26px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      transition: all 0.2s;
+    }
+    .feature:hover { border-color: #3b4e70; background: var(--panel-hover); transform: translateY(-2px); }
+    .feature .ico {
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      background: #1a2336;
+      border: 1px solid var(--line-bright);
+      display: grid;
+      place-items: center;
+      font-size: 20px;
+      margin-bottom: 16px;
+    }
+    .feature h3 { font-size: 17px; font-weight: 700; margin-bottom: 8px; }
+    .feature p { color: var(--muted); font-size: 14px; line-height: 1.55; }
+
+    /* Steps */
+    .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .step {
+      padding: 26px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+    }
+    .num { color: var(--blue); font-weight: 800; font-size: 13px; letter-spacing: 1px; margin-bottom: 12px; }
+    .step h3 { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+    .step p { color: var(--muted); font-size: 14px; line-height: 1.55; }
+
+    /* Privacy Banner */
+    .privacy {
+      background: linear-gradient(135deg, #101625 0%, #0d121c 100%);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 40px;
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 36px;
+      align-items: center;
+    }
+    .privacy h2 { font-size: 32px; font-weight: 800; line-height: 1.2; margin-bottom: 14px; }
+    .privacy p { color: var(--muted); font-size: 15px; line-height: 1.6; margin-bottom: 20px; }
+    .checks { display: grid; gap: 12px; }
+    .check-item { display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 500; }
+    .check-icon { color: var(--green); font-weight: 900; font-size: 16px; }
+
+    /* FAQ */
+    .faq { max-width: 820px; margin: auto; display: flex; flex-direction: column; gap: 12px; }
+    .faq details {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 18px 22px;
+      transition: all 0.2s;
+    }
+    .faq details[open] { border-color: #3b4e70; background: #151a28; }
+    .faq summary {
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      user-select: none;
+    }
+    .faq summary::-webkit-details-marker { display: none; }
+    .faq summary:after { content: "+"; font-size: 20px; color: var(--blue); font-weight: 400; }
+    .faq details[open] summary:after { content: "−"; }
+    .faq p { color: var(--muted); font-size: 14.5px; line-height: 1.6; margin-top: 12px; }
+    .faq code { background: #0c101a; padding: 2px 6px; border-radius: 4px; font-size: 13px; color: #8db5ff; }
+
+    /* Footer */
+    .footer {
+      border-top: 1px solid var(--line);
+      padding: 36px 0;
+      color: var(--muted-dark);
+      font-size: 13.5px;
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .footer a:hover { color: var(--text); }
+
+    /* Responsive */
+    @media (max-width: 860px) {
+      .hero h1 { letter-spacing: -1.5px; }
+      .grid, .steps, .privacy { grid-template-columns: 1fr; }
+      .popover-stage { justify-content: center; }
+      .mac-popover { width: 100%; max-width: 360px; }
+      .dash-window { flex-direction: column; }
+      .dash-sidebar { width: 100%; border-right: none; border-bottom: 1px solid var(--line); }
+      .navlinks a:nth-child(2) { display: none; }
+    }
   </style>
 </head>
 <body>
-  <header class="wrap nav"><a class="brand" href="#top"><span class="mark">↔</span> ClaudeSwitch</a><nav class="navlinks"><a href="#features">Features</a><a href="#how">How it works</a><a href="https://github.com/varunkkanjarla/ClaudeSwitch">GitHub ↗</a></nav></header>
+  <!-- Header -->
+  <header class="wrap nav">
+    <a class="brand" href="#top">
+      <span class="mark">↔</span>
+      ClaudeSwitch
+    </a>
+    <nav class="navlinks">
+      <a href="#preview">Interface</a>
+      <a href="#features">Features</a>
+      <a href="#install">Install</a>
+      <a href="#faq">FAQ</a>
+      <a class="nav-btn" href="https://github.com/varunkkanjarla/ClaudeSwitch" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+    </nav>
+  </header>
+
   <main id="top">
+    <!-- Hero Section -->
     <section class="wrap hero">
-      <div class="eyebrow">A focused macOS menu-bar companion</div>
-      <h1>Your Claude workspaces.<br><span style="color:var(--blue)">One switch away.</span></h1>
-      <p>Keep work, personal and client environments organised. Launch Claude Desktop or Claude Code CLI with the right workspace context—without juggling terminal commands.</p>
-      <div class="actions"><a class="btn" href="https://github.com/varunkkanjarla/ClaudeSwitch/releases/latest">↓ Download for macOS</a><a class="btn secondary" href="https://github.com/varunkkanjarla/ClaudeSwitch">⌘ View source on GitHub</a></div>
-      <div class="hint">macOS 14+ · Open source · Local-first · Beta</div>
-      <div class="preview" aria-label="Illustrative ClaudeSwitch menu bar interface">
-        <div class="windowbar"><i class="dot"></i><i class="dot"></i><i class="dot"></i></div>
-        <div class="apphead"><strong>↔ &nbsp; ClaudeSwitch</strong><span style="color:var(--muted)">⚙</span></div>
-        <div class="account"><div class="avatar">W</div><div class="acctmeta"><b>Company</b><small>Work · company@example.com</small></div><span class="chip">Desktop</span><span class="chip">CLI</span></div>
-        <div class="account"><div class="avatar purple">P</div><div class="acctmeta"><b>Personal</b><small>Personal workspace</small></div><span class="chip">Desktop</span><span class="chip">CLI</span></div>
-        <div style="padding:15px 3px 2px;color:var(--muted);font-size:12px">Browser action is optional and can be enabled in Settings.</div>
+      <div class="eyebrow">
+        <span class="eyebrow-dot"></span>
+        v1.0.0 Now Available for macOS
+      </div>
+      <h1>Your Claude workspaces.<br><span class="gradient-text">One switch away.</span></h1>
+      <p>Keep work, personal, and client environments cleanly isolated. Launch Claude Desktop or Claude Code CLI with dedicated config directories and working folders—straight from your Mac menu bar.</p>
+
+      <!-- Primary Action Buttons -->
+      <div class="actions">
+        <a class="btn" href="https://github.com/varunkkanjarla/ClaudeSwitch/releases/download/v1.0.0/ClaudeSwitch-1.0.0.dmg" download>
+          ↓ Download for macOS (DMG)
+        </a>
+        <a class="btn secondary" href="https://github.com/varunkkanjarla/ClaudeSwitch" target="_blank" rel="noopener noreferrer">
+          ⌘ View on GitHub
+        </a>
+      </div>
+
+      <!-- Homebrew Command Box -->
+      <div class="brew-wrap" title="Click copy to run in your Terminal">
+        <div class="brew-code">
+          <span class="brew-prompt">$</span>
+          <span id="brew-text">brew tap varunkkanjarla/tap && brew install --cask claudeswitch</span>
+        </div>
+        <button class="copy-btn" id="copy-btn" onclick="copyBrewCmd()">
+          <span id="copy-text">Copy</span>
+        </button>
+      </div>
+      <div class="hint">Supports macOS 14+ (Sonoma & Sequoia) · Apple Silicon & Intel · Local-first · Open Source</div>
+
+      <!-- Interactive UI Showcase -->
+      <div class="showcase" id="preview">
+        <!-- Tab selector -->
+        <div class="ui-tabs" role="tablist">
+          <button class="ui-tab active" id="tab-popover" onclick="switchView('popover')"> Menu Bar Popover</button>
+          <button class="ui-tab" id="tab-dash" onclick="switchView('dash')">💻 MacBook Settings & Dashboard</button>
+        </div>
+
+        <!-- Screen Container with macOS styling -->
+        <div class="screen-container">
+          <!-- Top macOS Menubar Strip -->
+          <div class="mac-menubar">
+            <div class="mac-left">
+              <span class="apple-icon"></span>
+              <span style="font-weight:700">Finder</span>
+              <span>File</span>
+              <span>Edit</span>
+              <span>View</span>
+              <span>Window</span>
+            </div>
+            <div class="mac-right">
+              <span class="menu-active-icon">↔</span>
+              <span>100%</span>
+              <span>Thu Nov 5 1:45 PM</span>
+            </div>
+          </div>
+
+          <!-- View 1: Real Menu Bar Popover -->
+          <div class="popover-stage" id="view-popover">
+            <div class="mac-popover">
+              <div class="popover-header">
+                <div class="popover-title">
+                  <span style="color:var(--blue);font-weight:900">↔</span> ClaudeSwitch
+                </div>
+                <div class="popover-settings" title="Settings" onclick="switchView('dash')">⚙</div>
+              </div>
+              <div class="popover-notice">
+                Desktop opens the installed app. CLI keeps an isolated configuration per account.
+              </div>
+              <div class="account-list">
+                <!-- Account 1: Company -->
+                <div class="acc-item">
+                  <div class="acc-top">
+                    <div class="acc-avatar blue">💼</div>
+                    <div class="acc-info">
+                      <div class="acc-name">Company</div>
+                      <div class="acc-sub">Work · company@enterprise.com</div>
+                      <div class="acc-path">~/Projects/enterprise-core</div>
+                    </div>
+                  </div>
+                  <div class="acc-btns">
+                    <span class="action-pill">◫ Desktop</span>
+                    <span class="action-pill">>_ CLI</span>
+                  </div>
+                </div>
+
+                <!-- Account 2: Personal -->
+                <div class="acc-item">
+                  <div class="acc-top">
+                    <div class="acc-avatar purple">👤</div>
+                    <div class="acc-info">
+                      <div class="acc-name">Personal</div>
+                      <div class="acc-sub">Personal lab · dev@varun.io</div>
+                      <div class="acc-path">~/Code/experiments</div>
+                    </div>
+                  </div>
+                  <div class="acc-btns">
+                    <span class="action-pill">◫ Desktop</span>
+                    <span class="action-pill">>_ CLI</span>
+                  </div>
+                </div>
+
+                <!-- Account 3: Client -->
+                <div class="acc-item">
+                  <div class="acc-top">
+                    <div class="acc-avatar green">✦</div>
+                    <div class="acc-info">
+                      <div class="acc-name">Acme Corp</div>
+                      <div class="acc-sub">Client A · contact@acme.inc</div>
+                      <div class="acc-path">~/Clients/acme-app</div>
+                    </div>
+                  </div>
+                  <div class="acc-btns">
+                    <span class="action-pill">◫ Desktop</span>
+                    <span class="action-pill">>_ CLI</span>
+                  </div>
+                </div>
+              </div>
+              <div class="popover-footer">
+                <span class="pop-btn" onclick="switchView('dash')">Manage accounts...</span>
+                <span class="pop-btn">Quit (⌘Q)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- View 2: Real MacBook Settings / Dashboard Window -->
+          <div class="dashboard-stage" id="view-dash">
+            <div class="dash-window">
+              <!-- Sidebar -->
+              <div class="dash-sidebar">
+                <div class="window-traffic">
+                  <div class="dot red"></div>
+                  <div class="dot yellow"></div>
+                  <div class="dot green"></div>
+                </div>
+                <div class="sidebar-section-title">Accounts</div>
+                <div class="sidebar-item active">💼 Company</div>
+                <div class="sidebar-item">👤 Personal</div>
+                <div class="sidebar-item">✦ Acme Corp</div>
+                <div style="margin-top:auto">
+                  <div class="sidebar-item" style="border:1px dashed #3a4b6b; justify-content:center;">+ Add Account</div>
+                </div>
+              </div>
+
+              <!-- Main Content -->
+              <div class="dash-content">
+                <div class="dash-title">Workspace Configuration</div>
+                <div class="dash-desc">Configure designated CLI working directories and custom labels for each environment.</div>
+
+                <div class="dash-card">
+                  <div class="dash-card-header">
+                    <div class="dash-card-title">
+                      <span>💼</span>
+                      <span>Company (Active)</span>
+                    </div>
+                    <span class="dash-card-badge">CLAUDE_CONFIG_DIR isolated</span>
+                  </div>
+                  <div class="dash-field">
+                    <span>Config:</span>
+                    <code>~/Library/Application Support/ClaudeSwitch/ClaudeCode/acct-01/</code>
+                  </div>
+                  <div class="dash-field">
+                    <span>Working Directory:</span>
+                    <code>/Users/varun.kanjarla/Projects/enterprise-core</code>
+                  </div>
+                  <div style="display:flex; gap:8px; margin-top:12px;">
+                    <span class="action-pill" style="padding:6px 12px;">◫ Launch Desktop</span>
+                    <span class="action-pill" style="padding:6px 12px;">>_ Open in Terminal</span>
+                    <span class="action-pill" style="padding:6px 12px; background:transparent;">Edit Account</span>
+                  </div>
+                </div>
+
+                <div class="dash-card" style="background:#131b2a; border-color:#202a3d;">
+                  <div class="dash-card-header">
+                    <div class="dash-card-title">
+                      <span>⚙</span>
+                      <span>App Integrations & Settings</span>
+                    </div>
+                  </div>
+                  <div class="dash-field">✓ Claude Desktop launcher: Launch Services native activation</div>
+                  <div class="dash-field">✓ Claude Code CLI launcher: Isolated environment per account</div>
+                  <div class="dash-field">✓ Optional Browser shortcut: Opens selected browser profile</div>
+                  <div class="dash-field">✓ Privacy Guarantee: No credentials, tokens or cookies accessed</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
-    <section class="wrap sections" id="features"><h2 class="sectiontitle">Built around how you use Claude</h2><p class="sub">A small native utility, not another account portal. Your labels and launch preferences stay on your Mac.</p><div class="grid">
-      <article class="feature"><div class="ico">▣</div><h3>Claude Desktop</h3><p>Open or activate the installed Claude macOS application directly from the menu bar.</p></article>
-      <article class="feature"><div class="ico">⌘</div><h3>Claude Code CLI</h3><p>Launch the CLI with an account-specific configuration directory and working folder.</p></article>
-      <article class="feature"><div class="ico">✦</div><h3>Your own labels</h3><p>Create Work, Personal, Company, Client A, Lab or any names, tags, icons and colours you need.</p></article>
-      <article class="feature"><div class="ico">◎</div><h3>Optional browser</h3><p>Enable the browser shortcut only if you want it. It opens your selected browser's existing profile.</p></article>
-      <article class="feature"><div class="ico">↻</div><h3>Updates on your terms</h3><p>Manually check GitHub releases when you choose. No silent downloads or forced updates.</p></article>
-      <article class="feature"><div class="ico">⌂</div><h3>Local-first</h3><p>No ClaudeSwitch account, cloud sync, telemetry or background service is required.</p></article>
-    </div></section>
-    <section class="wrap sections" id="how"><h2 class="sectiontitle">Up and running in minutes</h2><p class="sub">Add your workspaces once, then launch the tool you need.</p><div class="steps">
-      <article class="step"><div class="num">01 / INSTALL</div><h3>Download the app</h3><p>Open the DMG and move ClaudeSwitch into Applications.</p></article>
-      <article class="step"><div class="num">02 / CONFIGURE</div><h3>Add your accounts</h3><p>Choose labels, colours and a working folder for each CLI environment.</p></article>
-      <article class="step"><div class="num">03 / SIGN IN</div><h3>Authenticate normally</h3><p>Sign into Claude Desktop or authenticate each Claude Code configuration.</p></article>
-      <article class="step"><div class="num">04 / LAUNCH</div><h3>Use the menu bar</h3><p>Pick an account and launch Desktop or CLI with one click.</p></article>
-    </div></section>
-    <section class="wrap sections"><div class="privacy"><div><h2>Private by design.<br>Simple by default.</h2><p>ClaudeSwitch stores its own account labels and preferences locally. It does not inspect or copy Claude passwords, cookies or tokens.</p><a class="btn secondary" href="https://github.com/varunkkanjarla/ClaudeSwitch/blob/main/SECURITY.md">Read security policy ↗</a></div><div class="checks"><div>No cloud account or telemetry</div><div>No admin access for normal use</div><div>No forced browser profile creation</div><div>No credential or cookie extraction</div><div>Remove account metadata without deleting external sessions</div></div></div></section>
-    <section class="wrap sections"><h2 class="sectiontitle">A few important details</h2><div class="faq">
-      <details><summary>Does Desktop switch between Claude accounts?</summary><p>No. ClaudeSwitch opens the installed Claude Desktop app, which uses its existing signed-in identity. It does not claim to create independent Desktop sessions.</p></details>
-      <details><summary>Does each CLI account have separate authentication?</summary><p>ClaudeSwitch sets a distinct CLAUDE_CONFIG_DIR for each account. Claude Code manages authentication in that directory; you authenticate each one yourself.</p></details>
-      <details><summary>What does the optional Browser action do?</summary><p>It opens claude.ai in your selected browser and existing browser profile. That profile's current Claude login is used. It does not create a separate login context.</p></details>
-      <details><summary>Is this a production release?</summary><p>The project is currently beta. Check the GitHub releases for signed installer availability and read the macOS test checklist before using it for important workflows.</p></details>
-      <details><summary>How do I open ClaudeSwitch if macOS shows an unverified developer prompt?</summary><p>As an open-source community release, macOS Gatekeeper may show a security notice on first launch. Right-click (or Control-click) ClaudeSwitch in Applications and choose <strong>Open</strong>, or run <code>xattr -cr /Applications/ClaudeSwitch.app</code> in Terminal.</p></details>
-    </div></section>
+
+    <!-- Features Section -->
+    <section class="wrap sections" id="features">
+      <h2 class="sectiontitle">Built specifically for macOS & Claude</h2>
+      <p class="sub">A focused, native menu bar companion. No accounts to create, no cloud services, and zero telemetry.</p>
+      <div class="grid">
+        <article class="feature">
+          <div class="ico">⌘</div>
+          <h3>Per-Account Claude Code CLI</h3>
+          <p>Launches Terminal with an isolated <code>CLAUDE_CONFIG_DIR</code> and your designated project folder. Never accidentally use the wrong credentials or context.</p>
+        </article>
+        <article class="feature">
+          <div class="ico">▣</div>
+          <h3>One-Click Claude Desktop</h3>
+          <p>Quickly brings the official Claude macOS desktop app to the foreground without hunting through the Dock or Mission Control.</p>
+        </article>
+        <article class="feature">
+          <div class="ico">✦</div>
+          <h3>Custom Workspaces & Labels</h3>
+          <p>Create unlimited environments for Work, Personal, Clients, Labs, or Teams with custom colors, avatars, and labels.</p>
+        </article>
+        <article class="feature">
+          <div class="ico">📁</div>
+          <h3>Designated Working Folders</h3>
+          <p>Configure default project paths per workspace so your CLI starts right in the repository where you need it.</p>
+        </article>
+        <article class="feature">
+          <div class="ico">🔒</div>
+          <h3>Local-First & Private</h3>
+          <p>ClaudeSwitch does not inspect, store, or transmit your Claude tokens, passwords, or cookies. All settings live locally on your Mac.</p>
+        </article>
+        <article class="feature">
+          <div class="ico">🍺</div>
+          <h3>Homebrew & DMG Ready</h3>
+          <p>Install effortlessly with a single <code>brew install</code> command or drag-and-drop the native macOS DMG installer.</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- Installation Steps -->
+    <section class="wrap sections" id="install">
+      <h2 class="sectiontitle">Up and running in seconds</h2>
+      <p class="sub">Choose your preferred installation method and start switching workspaces seamlessly.</p>
+      <div class="steps">
+        <article class="step">
+          <div class="num">01 / INSTALL</div>
+          <h3>Choose Homebrew or DMG</h3>
+          <p>Install via <code>brew install --cask claudeswitch</code> or download the DMG directly from GitHub Releases.</p>
+        </article>
+        <article class="step">
+          <div class="num">02 / CONFIGURE</div>
+          <h3>Add Your Workspaces</h3>
+          <p>Open Settings to add your accounts, choose custom icons and colors, and pick working folders for each CLI profile.</p>
+        </article>
+        <article class="step">
+          <div class="num">03 / SWITCH</div>
+          <h3>Launch in One Click</h3>
+          <p>Click the ClaudeSwitch icon in your macOS menu bar to launch Claude Desktop or Claude Code CLI with the exact context you need.</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- Privacy Banner -->
+    <section class="wrap sections">
+      <div class="privacy">
+        <div>
+          <h2>Private by design.<br>Local by default.</h2>
+          <p>ClaudeSwitch is a small native utility designed with strict respect for your privacy. It manages metadata and launcher arguments locally and never intercepts authentication tokens or external sessions.</p>
+          <a class="btn secondary" href="https://github.com/varunkkanjarla/ClaudeSwitch/blob/main/SECURITY.md" target="_blank" rel="noopener noreferrer">
+            Read Security Policy ↗
+          </a>
+        </div>
+        <div class="checks">
+          <div class="check-item"><span class="check-icon">✓</span> No cloud account, tracking, or telemetry</div>
+          <div class="check-item"><span class="check-icon">✓</span> No credential, cookie, or password extraction</div>
+          <div class="check-item"><span class="check-icon">✓</span> No background daemons or admin privileges needed</div>
+          <div class="check-item"><span class="check-icon">✓</span> Dedicated per-profile CLAUDE_CONFIG_DIR isolation</div>
+          <div class="check-item"><span class="check-icon">✓</span> 100% open-source under the MIT License</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="wrap sections" id="faq">
+      <h2 class="sectiontitle">Frequently asked questions</h2>
+      <p class="sub">Clear answers on how ClaudeSwitch manages workspaces, launches tools, and handles security.</p>
+      <div class="faq">
+        <details open>
+          <summary>How does Claude Code CLI isolation work?</summary>
+          <p>ClaudeSwitch sets an independent <code>CLAUDE_CONFIG_DIR</code> environment variable for each account profile and launches Terminal directly in that workspace's designated project folder. This ensures tokens, configurations, and project contexts for your company, personal, and client accounts never mix.</p>
+        </details>
+        <details>
+          <summary>How does Claude Desktop launch?</summary>
+          <p>ClaudeSwitch activates the installed official Claude macOS desktop application via macOS Launch Services with a single click. Note that Claude Desktop retains its single active signed-in session across macOS.</p>
+        </details>
+        <details>
+          <summary>How do I install via Homebrew?</summary>
+          <p>Run <code>brew tap varunkkanjarla/tap && brew install --cask claudeswitch</code> in your Terminal. You can update anytime with <code>brew upgrade claudeswitch</code>.</p>
+        </details>
+        <details>
+          <summary>How do I open ClaudeSwitch if macOS Gatekeeper shows a warning?</summary>
+          <p>Because ClaudeSwitch is an open-source community release distributed outside the Mac App Store, macOS Gatekeeper may show a notice on first launch. Right-click (or Control-click) <code>ClaudeSwitch.app</code> in your Applications folder and select <strong>Open</strong>, or run <code>xattr -cr /Applications/ClaudeSwitch.app</code> in Terminal.</p>
+        </details>
+        <details>
+          <summary>What does the optional Browser shortcut do?</summary>
+          <p>You can optionally enable a Browser button in Settings to open <code>claude.ai</code> in your chosen browser (Chrome, Safari, Brave, Edge, etc.) directly from your menu bar. It opens your browser's existing profile.</p>
+        </details>
+        <details>
+          <summary>Where are my settings stored?</summary>
+          <p>All settings and profile definitions are stored strictly locally in standard macOS application support directories: <code>~/Library/Application Support/ClaudeSwitch/</code>.</p>
+        </details>
+      </div>
+    </section>
   </main>
-  <footer class="wrap footer"><span>© ClaudeSwitch · MIT License</span><span><a href="https://github.com/varunkkanjarla/ClaudeSwitch">GitHub</a> · <a href="https://github.com/varunkkanjarla/ClaudeSwitch/issues">Report an issue</a> · <a href="https://github.com/varunkkanjarla/ClaudeSwitch/blob/main/SECURITY.md">Security</a></span></footer>
-</body></html>
+
+  <!-- Footer -->
+  <footer class="wrap footer">
+    <span>© 2026 ClaudeSwitch · Released under the MIT License</span>
+    <span>
+      <a href="https://github.com/varunkkanjarla/ClaudeSwitch" target="_blank" rel="noopener noreferrer">GitHub</a> · 
+      <a href="https://github.com/varunkkanjarla/homebrew-tap" target="_blank" rel="noopener noreferrer">Homebrew Tap</a> · 
+      <a href="https://github.com/varunkkanjarla/ClaudeSwitch/releases" target="_blank" rel="noopener noreferrer">Releases</a> · 
+      <a href="https://github.com/varunkkanjarla/ClaudeSwitch/issues" target="_blank" rel="noopener noreferrer">Issues</a>
+    </span>
+  </footer>
+
+  <!-- Interactive JavaScript -->
+  <script>
+    function switchView(view) {
+      const popoverView = document.getElementById('view-popover');
+      const dashView = document.getElementById('view-dash');
+      const tabPopover = document.getElementById('tab-popover');
+      const tabDash = document.getElementById('tab-dash');
+
+      if (view === 'dash') {
+        popoverView.style.display = 'none';
+        dashView.style.display = 'block';
+        tabPopover.classList.remove('active');
+        tabDash.classList.add('active');
+      } else {
+        popoverView.style.display = 'flex';
+        dashView.style.display = 'none';
+        tabPopover.classList.add('active');
+        tabDash.classList.remove('active');
+      }
+    }
+
+    function copyBrewCmd() {
+      const cmd = document.getElementById('brew-text').innerText;
+      navigator.clipboard.writeText(cmd).then(() => {
+        const btn = document.getElementById('copy-btn');
+        const text = document.getElementById('copy-text');
+        btn.classList.add('copied');
+        text.innerText = 'Copied! ✓';
+        setTimeout(() => {
+          btn.classList.remove('copied');
+          text.innerText = 'Copy';
+        }, 2200);
+      });
+    }
+  </script>
+</body>
+</html>
