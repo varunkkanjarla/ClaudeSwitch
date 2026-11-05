@@ -3,6 +3,7 @@ import AppKit
 
 struct MenuBarView: View {
     @EnvironmentObject private var store: AccountStore
+    @StateObject private var desktopRuntime = DesktopProfileRuntime()
     @Environment(\.openWindow) private var openWindow
 
     var body: some View {
@@ -31,7 +32,7 @@ struct MenuBarView: View {
                             Spacer()
                         }
                         HStack(spacing: 8) {
-                            Button { Launcher.openDesktop(account: account, store: store) } label: { Label("Desktop", systemImage: "macwindow") }
+                            Button { Launcher.openDesktop(account: account, store: store, runtime: desktopRuntime) } label: { Label("Desktop", systemImage: "macwindow") }
                             Button { Launcher.openCode(account: account, store: store) } label: { Label("CLI", systemImage: "terminal") }
                             if store.showBrowserOption {
                                 Button { Launcher.openWeb(account: account, store: store) } label: { Label("Browser", systemImage: "globe") }
@@ -52,6 +53,7 @@ struct MenuBarView: View {
         }
         .padding(14).frame(width: 340)
         .onAppear {
+            desktopRuntime.configure(accounts: store.accounts, baseDirectory: store.baseDirectory)
             if !store.onboardingCompleted { openWindow(id: "onboarding") }
         }
     }
