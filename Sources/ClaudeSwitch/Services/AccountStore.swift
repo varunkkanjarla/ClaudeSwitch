@@ -116,7 +116,16 @@ private struct Settings: Codable {
     var githubRepository: String
     var onboardingCompleted: Bool
 
-    private enum CodingKeys: String, CodingKey { case preferredBrowser, showBrowserOption, updatesEnabled, githubRepository, onboardingCompleted, launchCodeInTerminal }
+    private enum CodingKeys: String, CodingKey { case preferredBrowser, showBrowserOption, updatesEnabled, githubRepository, onboardingCompleted }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(preferredBrowser, forKey: .preferredBrowser)
+        try container.encode(showBrowserOption, forKey: .showBrowserOption)
+        try container.encode(updatesEnabled, forKey: .updatesEnabled)
+        try container.encode(githubRepository, forKey: .githubRepository)
+        try container.encode(onboardingCompleted, forKey: .onboardingCompleted)
+    }
 
     init(preferredBrowser: String = "Default browser", showBrowserOption: Bool = false, updatesEnabled: Bool = false, githubRepository: String = "", onboardingCompleted: Bool = false) {
         self.preferredBrowser = preferredBrowser
