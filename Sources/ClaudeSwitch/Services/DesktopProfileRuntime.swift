@@ -62,7 +62,6 @@ enum DesktopProfileDetector {
             let command = String(parts[1])
             let lower = command.lowercased()
             guard !lower.contains("--type="),
-                  lower.contains(".app/contents/macos/"),
                   lower.contains("claude") else { continue }
 
             for (accountID, profileURL) in profiles {
