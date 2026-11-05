@@ -117,6 +117,7 @@ struct DashboardView: View {
                 VStack(alignment: .leading, spacing: 3) {
                     Text(account.name).font(.headline)
                     Text(account.tag.isEmpty ? (account.email.isEmpty ? "No tag or email" : account.email) : account.tag + (account.email.isEmpty ? "" : " · " + account.email)).font(.caption).foregroundStyle(.secondary)
+                    Text("Desktop: \(desktopRuntime.status(for: account))").font(.caption2).foregroundStyle(.secondary).lineLimit(2)
                     Text("CLI folder: \(account.workingDirectory)").font(.caption2).foregroundStyle(.tertiary).lineLimit(1)
                 }
                 Spacer()
