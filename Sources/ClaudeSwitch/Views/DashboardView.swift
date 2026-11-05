@@ -88,7 +88,7 @@ struct DashboardView: View {
                             Label("No admin access intended for normal use.", systemImage: "checkmark.shield")
                             Label("No system default browser changes or forced browser-profile creation.", systemImage: "checkmark.shield")
                             Label("No passwords, cookies or Claude tokens are read, copied or exported.", systemImage: "checkmark.shield")
-                            Label("Only ClaudeSwitch metadata and per-account CLI config folders are created in your user Library.", systemImage: "folder")
+                            Label("ClaudeSwitch metadata, per-account CLI config folders and isolated Desktop profile folders are created in your user Library.", systemImage: "folder")
                             Button("Export privacy-safe diagnostics") { exportDiagnostics() }
                         }.frame(maxWidth: .infinity, alignment: .leading).padding(.vertical, 5)
                     }
