@@ -77,6 +77,16 @@ For local testing:
 
 For a signed/notarized release, configure the environment variables described in `RELEASE_PLAN.md`. Do not distribute an unsigned beta as a production build.
 
+Without `DEVELOPER_ID_APPLICATION`, the script builds a universal (Apple silicon + Intel) app and signs the whole bundle ad hoc. It opens, but because it is not notarized macOS blocks the first launch: open ClaudeSwitch once, then choose **System Settings → Privacy & Security → Open Anyway**. Set `ARCHS=arm64` for a single-architecture build.
+
+## Install with Homebrew
+
+```bash
+brew tap varunkkanjarla/tap && brew install --cask claudeswitch
+```
+
+On first launch, allow it in **System Settings → Privacy & Security → Open Anyway** (until releases are notarized). If macOS says the app is "damaged", you have the v1.0.0 build, whose bundle was not signed: run `brew upgrade --cask claudeswitch`.
+
 ## Project structure
 
 ```text
