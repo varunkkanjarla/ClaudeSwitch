@@ -11,13 +11,19 @@ APP="$ROOT/build/ClaudeSwitch.app"
 DMG="$ROOT/build/ClaudeSwitch-${VERSION}.dmg"
 IDENTITY="${DEVELOPER_ID_APPLICATION:-}"
 NOTARY_PROFILE="${NOTARY_PROFILE:-}"
+ARCHS="${ARCHS:-arm64 x86_64}"
 
 rm -rf "$APP" "$DMG"
 mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources" "$ROOT/build"
-swift build -c "$CONFIG"
-BIN="$(swift build -c "$CONFIG" --show-bin-path)/ClaudeSwitch"
-[[ -x "$BIN" ]] || { echo "Build executable not found: $BIN" >&2; exit 3; }
-cp "$BIN" "$APP/Contents/MacOS/ClaudeSwitch"
+# One build per architecture, merged with lipo: multi-arch `swift build` needs full Xcode, this works with Command Line Tools too.
+SLICES=()
+for ARCH in $ARCHS; do
+  swift build -c "$CONFIG" --arch "$ARCH"
+  BIN="$(swift build -c "$CONFIG" --arch "$ARCH" --show-bin-path)/ClaudeSwitch"
+  [[ -x "$BIN" ]] || { echo "Build executable not found: $BIN" >&2; exit 3; }
+  SLICES+=("$BIN")
+done
+lipo -create "${SLICES[@]}" -output "$APP/Contents/MacOS/ClaudeSwitch"
 cp "$ROOT/Distribution/macOS/Info.plist" "$APP/Contents/Info.plist"
 /usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString $VERSION" "$APP/Contents/Info.plist"
 /usr/libexec/PlistBuddy -c "Set :CFBundleVersion $BUILD_NUMBER" "$APP/Contents/Info.plist"
@@ -26,7 +32,11 @@ if [[ -n "$IDENTITY" ]]; then
   codesign --force --options runtime --timestamp --sign "$IDENTITY" "$APP"
   codesign --verify --deep --strict --verbose=2 "$APP"
 else
-  echo "WARNING: creating an unsigned local-test build. Do not publish this DMG as a production installer." >&2
+  # Without Developer ID, seal the whole bundle ad hoc. A bundle carrying only the linker's signature fails
+  # strict verification, which Gatekeeper reports to users as "damaged and can't be opened".
+  codesign --force --sign - "$APP"
+  codesign --verify --deep --strict --verbose=2 "$APP"
+  echo "WARNING: ad-hoc signed, not notarized. Users must allow it once in System Settings > Privacy & Security > Open Anyway." >&2
 fi
 
 hdiutil create -volname "ClaudeSwitch" -srcfolder "$APP" -ov -format UDZO "$DMG"

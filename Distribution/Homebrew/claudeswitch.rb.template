@@ -1,5 +1,5 @@
 cask "claudeswitch" do
-  version "1.0.0"
+  version "1.1.0"
   sha256 "REPLACE_WITH_SHA256_FROM_RELEASE_DMG"
 
   url "https://github.com/varunkkanjarla/ClaudeSwitch/releases/download/v#{version}/ClaudeSwitch-#{version}.dmg"
@@ -8,4 +8,9 @@ cask "claudeswitch" do
   homepage "https://varunkkanjarla.github.io/ClaudeSwitch/"
 
   app "ClaudeSwitch.app"
+
+  caveats <<~EOS
+    ClaudeSwitch is ad-hoc signed but not notarized. On first launch macOS blocks it:
+    open it once, then choose System Settings > Privacy & Security > Open Anyway.
+  EOS
 end
