@@ -1,0 +1,11 @@
+cask "claudeswitch" do
+  version "1.0.0"
+  sha256 "REPLACE_WITH_SHA256_FROM_RELEASE_DMG"
+
+  url "https://github.com/varunkkanjarla/ClaudeSwitch/releases/download/v#{version}/ClaudeSwitch-#{version}.dmg"
+  name "ClaudeSwitch"
+  desc "Local-first macOS menu-bar companion for Claude Desktop and Claude Code CLI"
+  homepage "https://varunkkanjarla.github.io/ClaudeSwitch/"
+
+  app "ClaudeSwitch.app"
+end

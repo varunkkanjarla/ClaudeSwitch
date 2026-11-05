@@ -1,0 +1,26 @@
+name: macOS build
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        macos: [macos-14, macos-15]
+    runs-on: ${{ matrix.macos }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Select Xcode
+        run: xcodebuild -version
+      - name: Build
+        run: swift build -c release
+      - name: Package app bundle
+        run: ./Scripts/build-macos-app.sh
+      - name: Upload DMG
+        uses: actions/upload-artifact@v4
+        with:
+          name: ClaudeSwitch-${{ matrix.macos }}
+          path: build/*.dmg

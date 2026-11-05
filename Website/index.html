@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="ClaudeSwitch is a local-first macOS menu bar app for launching Claude Desktop and Claude Code CLI across named workspaces.">
+  <title>ClaudeSwitch — Your Claude workspaces, one switch away</title>
+  <style>
+    :root{color-scheme:dark;--bg:#090b10;--panel:#11151e;--panel2:#171d29;--text:#f5f7fb;--muted:#a1aaba;--line:#283142;--blue:#8db4ff;--green:#9be3c0;--max:1120px}
+    *{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% -20%,#24365c 0,transparent 48%),var(--bg);color:var(--text);font:16px/1.6 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+    a{color:inherit;text-decoration:none}.wrap{width:min(var(--max),calc(100% - 40px));margin:auto}.nav{height:76px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #ffffff12}.brand{font-size:20px;font-weight:750;letter-spacing:-.5px;display:flex;gap:10px;align-items:center}.mark{width:32px;height:32px;border-radius:10px;background:linear-gradient(140deg,#9dc0ff,#627eea);display:grid;place-items:center;color:#10172b;font-weight:900}.navlinks{display:flex;gap:24px;color:var(--muted);font-size:14px}.hero{padding:104px 0 76px;text-align:center}.eyebrow{color:var(--green);font-size:13px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase}.hero h1{font-size:clamp(42px,7vw,76px);line-height:1.04;letter-spacing:-3px;max-width:850px;margin:20px auto}.hero p{color:var(--muted);font-size:19px;max-width:670px;margin:0 auto 28px}.actions{display:flex;justify-content:center;gap:12px;flex-wrap:wrap}.btn{padding:12px 19px;border-radius:12px;background:#e9efff;color:#10172b;font-weight:750;display:inline-flex;gap:9px;align-items:center}.btn.secondary{background:#171e2b;color:#e9efff;border:1px solid var(--line)}.hint{font-size:12px;color:#8792a5;margin-top:14px}.preview{max-width:770px;margin:0 auto;background:linear-gradient(150deg,#1b2433,#10141d);border:1px solid #3a455b;border-radius:22px;padding:18px;box-shadow:0 28px 90px #0009;text-align:left}.windowbar{display:flex;gap:7px;padding:2px 2px 16px;border-bottom:1px solid var(--line)}.dot{width:9px;height:9px;border-radius:50%;background:#536078}.apphead{display:flex;align-items:center;justify-content:space-between;padding:16px 2px}.apphead strong{font-size:17px}.account{display:flex;align-items:center;gap:13px;padding:15px;background:#ffffff08;border:1px solid #ffffff0d;border-radius:15px;margin-top:10px}.avatar{width:40px;height:40px;border-radius:12px;background:#315c9d;display:grid;place-items:center;color:#d9e8ff;font-weight:800}.avatar.purple{background:#55417e}.acctmeta{flex:1}.acctmeta b{display:block}.acctmeta small{color:var(--muted)}.chip{font-size:12px;padding:7px 11px;background:#283449;border-radius:8px;color:#dbe7ff}.sections{padding:62px 0}.sectiontitle{text-align:center;font-size:34px;letter-spacing:-1px;margin:0 0 10px}.sub{text-align:center;color:var(--muted);max-width:650px;margin:0 auto 32px}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}.feature,.step{padding:23px;background:var(--panel);border:1px solid var(--line);border-radius:17px}.feature .ico{font-size:23px}.feature h3{margin:12px 0 6px}.feature p,.step p{color:var(--muted);font-size:14px;margin:0}.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.num{color:var(--blue);font-weight:800;font-size:13px}.step h3{font-size:16px;margin:8px 0}.privacy{background:linear-gradient(120deg,#121b25,#10151f);border:1px solid var(--line);border-radius:22px;padding:34px;display:grid;grid-template-columns:1.1fr .9fr;gap:30px}.privacy h2{font-size:30px;line-height:1.15;margin:0 0 12px}.privacy p{color:var(--muted)}.checks{display:grid;gap:12px;align-content:center}.checks div:before{content:'✓';color:var(--green);font-weight:900;margin-right:10px}.faq{max-width:780px;margin:auto}.faq details{border-bottom:1px solid var(--line);padding:17px 0}.faq summary{font-weight:700;cursor:pointer}.faq p{color:var(--muted);font-size:14px}.footer{border-top:1px solid var(--line);padding:28px 0;color:var(--muted);font-size:13px;display:flex;justify-content:space-between;gap:15px;flex-wrap:wrap}
+    @media(max-width:760px){.hero{padding:72px 0 55px}.hero h1{letter-spacing:-1.7px}.grid,.steps{grid-template-columns:1fr}.privacy{grid-template-columns:1fr}.navlinks{gap:12px}.navlinks a:nth-child(2){display:none}.account{flex-wrap:wrap}.chip{margin-left:53px}}
+  </style>
+</head>
+<body>
+  <header class="wrap nav"><a class="brand" href="#top"><span class="mark">↔</span> ClaudeSwitch</a><nav class="navlinks"><a href="#features">Features</a><a href="#how">How it works</a><a href="https://github.com/varunkkanjarla/ClaudeSwitch">GitHub ↗</a></nav></header>
+  <main id="top">
+    <section class="wrap hero">
+      <div class="eyebrow">A focused macOS menu-bar companion</div>
+      <h1>Your Claude workspaces.<br><span style="color:var(--blue)">One switch away.</span></h1>
+      <p>Keep work, personal and client environments organised. Launch Claude Desktop or Claude Code CLI with the right workspace context—without juggling terminal commands.</p>
+      <div class="actions"><a class="btn" href="https://github.com/varunkkanjarla/ClaudeSwitch/releases/latest">↓ Download for macOS</a><a class="btn secondary" href="https://github.com/varunkkanjarla/ClaudeSwitch">⌘ View source on GitHub</a></div>
+      <div class="hint">macOS 14+ · Open source · Local-first · Beta</div>
+      <div class="preview" aria-label="Illustrative ClaudeSwitch menu bar interface">
+        <div class="windowbar"><i class="dot"></i><i class="dot"></i><i class="dot"></i></div>
+        <div class="apphead"><strong>↔ &nbsp; ClaudeSwitch</strong><span style="color:var(--muted)">⚙</span></div>
+        <div class="account"><div class="avatar">W</div><div class="acctmeta"><b>Company</b><small>Work · company@example.com</small></div><span class="chip">Desktop</span><span class="chip">CLI</span></div>
+        <div class="account"><div class="avatar purple">P</div><div class="acctmeta"><b>Personal</b><small>Personal workspace</small></div><span class="chip">Desktop</span><span class="chip">CLI</span></div>
+        <div style="padding:15px 3px 2px;color:var(--muted);font-size:12px">Browser action is optional and can be enabled in Settings.</div>
+      </div>
+    </section>
+    <section class="wrap sections" id="features"><h2 class="sectiontitle">Built around how you use Claude</h2><p class="sub">A small native utility, not another account portal. Your labels and launch preferences stay on your Mac.</p><div class="grid">
+      <article class="feature"><div class="ico">▣</div><h3>Claude Desktop</h3><p>Open or activate the installed Claude macOS application directly from the menu bar.</p></article>
+      <article class="feature"><div class="ico">⌘</div><h3>Claude Code CLI</h3><p>Launch the CLI with an account-specific configuration directory and working folder.</p></article>
+      <article class="feature"><div class="ico">✦</div><h3>Your own labels</h3><p>Create Work, Personal, Company, Client A, Lab or any names, tags, icons and colours you need.</p></article>
+      <article class="feature"><div class="ico">◎</div><h3>Optional browser</h3><p>Enable the browser shortcut only if you want it. It opens your selected browser's existing profile.</p></article>
+      <article class="feature"><div class="ico">↻</div><h3>Updates on your terms</h3><p>Manually check GitHub releases when you choose. No silent downloads or forced updates.</p></article>
+      <article class="feature"><div class="ico">⌂</div><h3>Local-first</h3><p>No ClaudeSwitch account, cloud sync, telemetry or background service is required.</p></article>
+    </div></section>
+    <section class="wrap sections" id="how"><h2 class="sectiontitle">Up and running in minutes</h2><p class="sub">Add your workspaces once, then launch the tool you need.</p><div class="steps">
+      <article class="step"><div class="num">01 / INSTALL</div><h3>Download the app</h3><p>Open the DMG and move ClaudeSwitch into Applications.</p></article>
+      <article class="step"><div class="num">02 / CONFIGURE</div><h3>Add your accounts</h3><p>Choose labels, colours and a working folder for each CLI environment.</p></article>
+      <article class="step"><div class="num">03 / SIGN IN</div><h3>Authenticate normally</h3><p>Sign into Claude Desktop or authenticate each Claude Code configuration.</p></article>
+      <article class="step"><div class="num">04 / LAUNCH</div><h3>Use the menu bar</h3><p>Pick an account and launch Desktop or CLI with one click.</p></article>
+    </div></section>
+    <section class="wrap sections"><div class="privacy"><div><h2>Private by design.<br>Simple by default.</h2><p>ClaudeSwitch stores its own account labels and preferences locally. It does not inspect or copy Claude passwords, cookies or tokens.</p><a class="btn secondary" href="https://github.com/varunkkanjarla/ClaudeSwitch/blob/main/SECURITY.md">Read security policy ↗</a></div><div class="checks"><div>No cloud account or telemetry</div><div>No admin access for normal use</div><div>No forced browser profile creation</div><div>No credential or cookie extraction</div><div>Remove account metadata without deleting external sessions</div></div></div></section>
+    <section class="wrap sections"><h2 class="sectiontitle">A few important details</h2><div class="faq">
+      <details><summary>Does Desktop switch between Claude accounts?</summary><p>No. ClaudeSwitch opens the installed Claude Desktop app, which uses its existing signed-in identity. It does not claim to create independent Desktop sessions.</p></details>
+      <details><summary>Does each CLI account have separate authentication?</summary><p>ClaudeSwitch sets a distinct CLAUDE_CONFIG_DIR for each account. Claude Code manages authentication in that directory; you authenticate each one yourself.</p></details>
+      <details><summary>What does the optional Browser action do?</summary><p>It opens claude.ai in your selected browser and existing browser profile. That profile's current Claude login is used. It does not create a separate login context.</p></details>
+      <details><summary>Is this a production release?</summary><p>The project is currently beta. Check the GitHub releases for signed installer availability and read the macOS test checklist before using it for important workflows.</p></details>
+    </div></section>
+  </main>
+  <footer class="wrap footer"><span>© ClaudeSwitch · MIT License</span><span><a href="https://github.com/varunkkanjarla/ClaudeSwitch">GitHub</a> · <a href="https://github.com/varunkkanjarla/ClaudeSwitch/issues">Report an issue</a> · <a href="https://github.com/varunkkanjarla/ClaudeSwitch/blob/main/SECURITY.md">Security</a></span></footer>
+</body></html>
