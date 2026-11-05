@@ -4,6 +4,7 @@ import UniformTypeIdentifiers
 
 struct DashboardView: View {
     @EnvironmentObject private var store: AccountStore
+    @StateObject private var desktopRuntime = DesktopProfileRuntime()
     @State private var editing: ClaudeAccount?
     @State private var showingAdd = false
     @State private var showingDelete: ClaudeAccount?
@@ -33,6 +34,18 @@ struct DashboardView: View {
                         ContentUnavailableView("Add your first account", systemImage: "person.crop.circle.badge.plus", description: Text("Create a label such as Work, Personal, Company or Client A. Then choose Desktop or CLI.")).frame(maxWidth: .infinity, minHeight: 180)
                     } else {
                         ForEach(store.accounts) { account in accountCard(account) }
+                    }
+
+                    GroupBox("Desktop profiles and account detection") {
+                        VStack(alignment: .leading, spacing: 9) {
+                            Label("Each account has its own Claude Desktop profile directory. Desktop profile isolation uses Electron's user-data-dir launch argument and is not an Anthropic-supported multi-account API.", systemImage: "macwindow.on.rectangle")
+                            Label("Running means ClaudeSwitch detected a process launched with that profile. It does not confirm which Claude identity is signed in.", systemImage: "lock.shield")
+                            Text(desktopRuntime.detectionMessage).font(.caption).foregroundStyle(.secondary)
+                            HStack {
+                                Spacer()
+                                Button("Refresh process status") { desktopRuntime.refresh() }
+                            }
+                        }.frame(maxWidth: .infinity, alignment: .leading).padding(.vertical, 5)
                     }
 
                     GroupBox("App integrations") {
@@ -83,6 +96,8 @@ struct DashboardView: View {
                 }.padding(28).frame(maxWidth: .infinity, alignment: .topLeading)
             }
         }
+        .onAppear { desktopRuntime.configure(accounts: store.accounts, baseDirectory: store.baseDirectory) }
+        .onChange(of: store.accounts) { _, accounts in desktopRuntime.configure(accounts: accounts, baseDirectory: store.baseDirectory) }
         .onReceive(NotificationCenter.default.publisher(for: .claudeSwitchRequestAddAccount)) { _ in showingAdd = true }
         .sheet(isPresented: $showingAdd) { AccountEditorView(title: "Add account", account: nil) { store.addAccount($0) } }
         .sheet(item: $editing) { account in AccountEditorView(title: "Edit account", account: account) { store.updateAccount($0) } }
@@ -105,7 +120,7 @@ struct DashboardView: View {
                     Text("CLI folder: \(account.workingDirectory)").font(.caption2).foregroundStyle(.tertiary).lineLimit(1)
                 }
                 Spacer()
-                Button { Launcher.openDesktop(account: account, store: store) } label: { Label("Desktop", systemImage: "macwindow") }
+                Button { Launcher.openDesktop(account: account, store: store, runtime: desktopRuntime) } label: { Label("Desktop", systemImage: "macwindow") }
                 Button { Launcher.openCode(account: account, store: store) } label: { Label("CLI", systemImage: "terminal") }
                 if store.showBrowserOption {
                     Button { Launcher.openWeb(account: account, store: store) } label: { Label("Browser", systemImage: "globe") }
