@@ -11,6 +11,8 @@ struct DashboardView: View {
     @State private var updateMessage = ""
     @State private var updateRelease: GitHubRelease?
     @State private var showingUpdateAlert = false
+    @State private var signInRequest: SignInRequest?
+    @State private var awaitingSignIn: SignInRequest?
 
     var body: some View {
         NavigationSplitView {
@@ -104,6 +106,17 @@ struct DashboardView: View {
         .confirmationDialog("Remove \(showingDelete?.name ?? "account")?", isPresented: Binding(get: { showingDelete != nil }, set: { if !$0 { showingDelete = nil } }), titleVisibility: .visible) {
             Button("Remove account", role: .destructive) { if let account = showingDelete { store.deleteAccount(account) }; showingDelete = nil }
         } message: { Text("This removes its ClaudeSwitch label and metadata. It does not sign you out or delete browser sessions or Claude Code data.") }
+        .confirmationDialog("Sign in \(signInRequest?.account.name ?? "profile")?", isPresented: Binding(get: { signInRequest != nil }, set: { if !$0 { signInRequest = nil } }), titleVisibility: .visible, presenting: signInRequest) { request in
+            Button("Quit and continue") { startSignIn(request) }
+            Button("Cancel", role: .cancel) {}
+        } message: { request in
+            Text("Browser sign-in returns to Claude Desktop through a claude:// link, which macOS gives to only one running Claude. To make sure it reaches \(request.account.name), these will quit: \(request.closing.map(\.label).joined(separator: ", ")). Any Code tab sessions running in them will stop.")
+        }
+        .alert("Finish signing in", isPresented: Binding(get: { awaitingSignIn != nil }, set: { if !$0 { awaitingSignIn = nil } }), presenting: awaitingSignIn) { request in
+            Button("Done") { finishSignIn(request) }
+        } message: { request in
+            Text("Sign in to \(request.account.name) in the Claude window that just opened. If the browser opens, finish there and choose Open Claude. Click Done when you are signed in." + (request.closing.contains(where: \.isDefaultProfile) ? " Your main Claude Desktop will reopen." : ""))
+        }
         .alert("ClaudeSwitch updates", isPresented: $showingUpdateAlert) {
             Button("Open release page") { if let url = updateRelease?.html_url { NSWorkspace.shared.open(url) } }
             Button("Later", role: .cancel) {}
@@ -128,10 +141,33 @@ struct DashboardView: View {
                 }
                 Menu {
                     Button("Edit", systemImage: "pencil") { editing = account }
+                    if !account.useExistingSetup {
+                        Button("Sign in this profile…", systemImage: "person.badge.key") { prepareSignIn(account) }
+                    }
                     Button("Remove", systemImage: "trash", role: .destructive) { showingDelete = account }
                 } label: { Image(systemName: "ellipsis.circle") }.menuStyle(.borderlessButton)
             }.padding(5)
         }
+    }
+
+    private func prepareSignIn(_ account: ClaudeAccount) {
+        do {
+            let request = SignInRequest(account: account, closing: try Launcher.competingDesktops(for: account, store: store))
+            if request.closing.isEmpty { startSignIn(request) } else { signInRequest = request }
+        } catch { store.updateStatus("Could not check running Claude Desktop windows: \(error.localizedDescription)") }
+    }
+
+    private func startSignIn(_ request: SignInRequest) {
+        Task {
+            if await Launcher.beginDesktopSignIn(account: request.account, store: store, runtime: desktopRuntime, closing: request.closing) {
+                awaitingSignIn = request
+            }
+        }
+    }
+
+    private func finishSignIn(_ request: SignInRequest) {
+        if request.closing.contains(where: \.isDefaultProfile) { Launcher.openDefaultDesktop(store: store) }
+        desktopRuntime.refresh()
     }
 
     @MainActor private func checkForUpdates() async {
@@ -163,6 +199,11 @@ struct DashboardView: View {
             }
         } catch { store.updateStatus("Could not prepare diagnostics: \(error.localizedDescription)") }
     }
+}
+
+private struct SignInRequest {
+    let account: ClaudeAccount
+    let closing: [RunningDesktop]
 }
 
 private struct AccountEditorView: View {

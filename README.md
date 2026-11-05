@@ -36,6 +36,7 @@ The app is a menu-bar app. Click its menu-bar icon to open the account switcher;
 1. Launch ClaudeSwitch and complete the welcome screen.
 2. Add an account with a label, optional tag/email, icon, colour and CLI working folder.
 3. Click **Desktop**. ClaudeSwitch launches the account's isolated local profile. Sign in separately inside that profile and verify the identity in Claude Desktop.
+   The first time, use **⋯ → Sign in this profile…** in Manage accounts. Browser sign-in (Google, email link, SSO) returns to Claude Desktop through a `claude://` link that macOS gives to only one running Claude, so ClaudeSwitch quits the other Claude Desktop windows, opens this profile, and reopens your main Desktop when you click Done. It never reads or forwards the sign-in link.
 4. Click **CLI** to open Terminal with that account's dedicated `CLAUDE_CONFIG_DIR`. Authenticate with Claude Code on first use.
 5. Optionally enable Browser in Settings to expose the browser action in account cards.
 
@@ -93,6 +94,7 @@ QA                                macOS beta test checklist
 ## Known limitations
 
 - Desktop isolation relies on Electron's `--user-data-dir` argument and must be validated against each Claude Desktop release. Process detection confirms profile association only, not the signed-in identity.
+- Signing in to an isolated profile while another Claude Desktop is running sends the browser's sign-in link to that other window. Use **Sign in this profile…**, which closes the others first; any Code tab sessions running in them stop.
 - Isolated profiles turn off Claude in Chrome pairing; Claude Desktop disables local pairing when its data folder is relocated. Use "existing Claude setup" for the account that needs it.
 - An isolated account starts from an empty Claude Code config folder, so global `CLAUDE.md`, skills, plugins and MCP servers from `~/.claude` are not available there.
 - Browser mode uses the browser's current profile. It cannot keep two Claude logins independent inside one profile.

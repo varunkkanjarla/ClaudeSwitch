@@ -47,4 +47,14 @@ If the app ignores the argument or multiple instances share a profile, stop usin
 8. Confirm repeated clicks activate an existing matching process rather than starting a duplicate.
 9. Confirm removing an account preserves its profile directory.
 
+## Sign-in hand-off (Sign in this profile…)
+
+1. With your main Claude Desktop and one other isolated profile open, choose **⋯ → Sign in this profile…** for account A.
+2. Confirm the dialog lists both open windows by name and warns about Code tab sessions.
+3. Choose **Quit and continue**; confirm both windows quit normally and only account A's Desktop opens.
+4. Sign in with Google in the browser and choose **Open Claude**; confirm account A's window, not a new default window, receives the sign-in.
+5. Click **Done**; confirm the main Claude Desktop reopens with its original identity.
+6. Leave a window showing an unsaved-changes or quit prompt and repeat; confirm ClaudeSwitch stops with a message naming it and does not force-quit.
+7. With only isolated profiles open, click **Desktop** on an account using the existing setup; confirm the main profile opens instead of an isolated window being activated.
+
 A successful Swift build alone does not prove Claude Desktop's runtime isolation works. This smoke test is required before advertising the feature as supported.
