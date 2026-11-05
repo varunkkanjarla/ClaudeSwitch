@@ -50,7 +50,7 @@ struct DashboardView: View {
 
                     GroupBox("App integrations") {
                         VStack(alignment: .leading, spacing: 12) {
-                            Label("Claude Desktop opens the installed macOS app using its current signed-in session.", systemImage: "macwindow")
+                            Label("Claude Desktop launches an experimental isolated profile for each ClaudeSwitch account. Sign in separately inside each profile.", systemImage: "macwindow")
                             Label("Claude Code CLI opens Terminal with a dedicated CLAUDE_CONFIG_DIR for each account.", systemImage: "terminal")
                             Divider()
                             Toggle("Show optional Browser action on account cards", isOn: $store.showBrowserOption)
