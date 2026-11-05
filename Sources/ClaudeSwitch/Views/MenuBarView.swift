@@ -28,6 +28,7 @@ struct MenuBarView: View {
                                 Text(account.name).font(.subheadline.weight(.semibold))
                                 Text(account.email.isEmpty ? (account.tag.isEmpty ? "Claude account" : account.tag) : account.email)
                                     .font(.caption).foregroundStyle(.secondary).lineLimit(1)
+                                Text(desktopRuntime.status(for: account)).font(.caption2).foregroundStyle(.secondary).lineLimit(2)
                             }
                             Spacer()
                         }
