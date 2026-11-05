@@ -21,14 +21,14 @@ enum Launcher {
 
     static func openCode(account: ClaudeAccount, store: AccountStore) {
         do {
-            let config = try store.prepareCodeDirectory(for: account)
             let workingDirectory = (account.workingDirectory as NSString).expandingTildeInPath
             var isDirectory: ObjCBool = false
             guard FileManager.default.fileExists(atPath: workingDirectory, isDirectory: &isDirectory), isDirectory.boolValue else {
                 store.updateStatus("The CLI working folder for \(account.name) no longer exists. Edit the account and choose a valid folder.")
                 return
             }
-            let command = "cd \(shellQuote(workingDirectory)) && export CLAUDE_CONFIG_DIR=\(shellQuote(config.path)) && if command -v claude >/dev/null 2>&1; then claude; else echo 'Claude Code CLI was not found. Install it and ensure claude is on PATH.'; fi"
+            let configExport = account.useExistingSetup ? "" : "export CLAUDE_CONFIG_DIR=\(shellQuote(try store.prepareCodeDirectory(for: account).path)) && "
+            let command = "cd \(shellQuote(workingDirectory)) && \(configExport)if command -v claude >/dev/null 2>&1; then claude; else echo 'Claude Code CLI was not found. Install it and ensure claude is on PATH.'; fi"
             let escaped = command.replacingOccurrences(of: "\\", with: "\\\\").replacingOccurrences(of: "\"", with: "\\\"")
             let script = "tell application \"Terminal\" to do script \"\(escaped)\""
             let process = Process()
@@ -55,6 +55,15 @@ enum Launcher {
             return
         }
 
+        if account.useExistingSetup {
+            NSWorkspace.shared.openApplication(at: appURL, configuration: NSWorkspace.OpenConfiguration()) { _, error in
+                Task { @MainActor in
+                    store.updateStatus(error.map { "Claude Desktop launch failed: \($0.localizedDescription)" } ?? "Opened Claude Desktop with your existing profile for \(account.name).")
+                }
+            }
+            return
+        }
+
         do {
             let profileURL = try store.prepareDesktopProfileDirectory(for: account)
             if let pid = try DesktopProfileDetector.runningProcessIDs([account.id: profileURL])[account.id]?.first,
@@ -70,6 +79,8 @@ enum Launcher {
                 "--no-first-run"
             ]
             configuration.createsNewApplicationInstance = true
+            // Points this profile's Code tab at the same config folder as the account's CLI instead of ~/.claude.
+            configuration.environment = ["CLAUDE_CONFIG_DIR": try store.prepareCodeDirectory(for: account).path]
             NSWorkspace.shared.openApplication(at: appURL, configuration: configuration) { _, error in
                 Task { @MainActor in
                     if let error {

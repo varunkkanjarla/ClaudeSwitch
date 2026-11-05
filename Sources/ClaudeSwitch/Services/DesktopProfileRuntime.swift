@@ -33,6 +33,7 @@ final class DesktopProfileRuntime: ObservableObject {
     }
 
     func status(for account: ClaudeAccount) -> String {
+        if account.useExistingSetup { return "Uses your existing Desktop profile" }
         guard let pids = runningPIDs[account.id], !pids.isEmpty else {
             return "Not running · sign-in state unknown"
         }

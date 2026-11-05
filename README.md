@@ -43,8 +43,9 @@ The app is a menu-bar app. Click its menu-bar icon to open the account switcher;
 
 | Action | Behaviour | Independent login? |
 |---|---|---|
-| Desktop | Launches Claude Desktop with an account-specific Electron user-data directory | Experimental; sign in separately and verify identity inside each window |
+| Desktop | Launches Claude Desktop with an account-specific Electron user-data directory, and sets `CLAUDE_CONFIG_DIR` so its Code tab uses the same config folder as the account's CLI | Experimental; sign in separately and verify identity inside each window |
 | CLI | Starts `claude` with an account-specific `CLAUDE_CONFIG_DIR` | Separate CLI configuration/auth context; authenticate each one |
+| Use my existing Claude setup (per-account option) | Desktop opens your normal profile and the CLI uses `~/.claude` | No; this is your current login and setup |
 | Browser (optional) | Opens `claude.ai` in the selected browser | No; uses that browser profile's current login |
 
 ClaudeSwitch never reads, copies, exports or manages Claude passwords, cookies or tokens. Desktop profile directories are created under `ClaudeSwitch/DesktopProfiles/<account-id>/` with owner-only directory permissions. Removing an account preserves its profile data. Claude Code itself manages authentication inside each configuration directory.
@@ -92,10 +93,11 @@ QA                                macOS beta test checklist
 ## Known limitations
 
 - Desktop isolation relies on Electron's `--user-data-dir` argument and must be validated against each Claude Desktop release. Process detection confirms profile association only, not the signed-in identity.
+- Isolated profiles turn off Claude in Chrome pairing; Claude Desktop disables local pairing when its data folder is relocated. Use "existing Claude setup" for the account that needs it.
+- An isolated account starts from an empty Claude Code config folder, so global `CLAUDE.md`, skills, plugins and MCP servers from `~/.claude` are not available there.
 - Browser mode uses the browser's current profile. It cannot keep two Claude logins independent inside one profile.
 - Claude Code CLI requires a working `claude` command in the user's Terminal PATH. Some shell environments may need PATH setup in the user's shell profile.
 - Terminal automation may trigger a macOS permission prompt. Company MDM policy can block Apple Events, unsigned apps or app installation.
-- Desktop isolation depends on Electron's `--user-data-dir` argument and must be regression-tested after Claude Desktop updates. Process detection confirms profile association only, not the signed-in identity.
 - The project must be compiled, exercised and signed on macOS. Linux source parsing is not a substitute for macOS validation.
 
 ## License
