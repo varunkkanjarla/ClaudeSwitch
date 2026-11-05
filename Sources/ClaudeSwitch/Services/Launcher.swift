@@ -41,7 +41,7 @@ enum Launcher {
         }
     }
 
-    static func openDesktop(account: ClaudeAccount, store: AccountStore) {
+    static func openDesktop(account: ClaudeAccount, store: AccountStore, runtime: DesktopProfileRuntime? = nil) {
         let bundleIDs = ["com.anthropic.claudefordesktop", "com.anthropic.Claude"]
         let bundleMatch = bundleIDs.compactMap { NSWorkspace.shared.urlForApplication(withBundleIdentifier: $0) }.first
         let localCandidates = [
@@ -54,10 +54,27 @@ enum Launcher {
             store.updateStatus("Claude Desktop was not found. Install the official macOS app first.")
             return
         }
-        NSWorkspace.shared.openApplication(at: appURL, configuration: NSWorkspace.OpenConfiguration()) { _, error in
-            Task { @MainActor in
-                store.updateStatus(error.map { "Claude Desktop launch failed: \($0.localizedDescription)" } ?? "Opened Claude Desktop. It uses the Desktop app's existing signed-in account, not a separate \(account.name) session.")
+
+        do {
+            let profileURL = try store.prepareDesktopProfileDirectory(for: account)
+            let configuration = NSWorkspace.OpenConfiguration()
+            configuration.arguments = [
+                "--user-data-dir=" + profileURL.path,
+                "--no-first-run"
+            ]
+            configuration.createsNewApplicationInstance = true
+            NSWorkspace.shared.openApplication(at: appURL, configuration: configuration) { _, error in
+                Task { @MainActor in
+                    if let error {
+                        store.updateStatus("Could not launch isolated Desktop profile for " + account.name + ": " + error.localizedDescription)
+                    } else {
+                        store.updateStatus("Launched Desktop profile for " + account.name + ". Sign in separately if needed. Signed-in identity is not verified by ClaudeSwitch.")
+                        runtime?.refresh()
+                    }
+                }
             }
+        } catch {
+            store.updateStatus("Could not prepare Desktop profile for " + account.name + ": " + error.localizedDescription)
         }
     }
 
