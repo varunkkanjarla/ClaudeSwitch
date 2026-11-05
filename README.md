@@ -8,6 +8,8 @@ ClaudeSwitch is a local-first macOS menu-bar utility for keeping named Claude en
 
 - Menu-bar popover with configurable accounts (Work, Personal, Company, Client A, Lab, or any labels users choose).
 - Per-account **Desktop** and **CLI** launch actions.
+- Experimental Claude Desktop profile isolation using a separate Electron user-data directory per account.
+- Local process detection that reports running profile PIDs without inspecting the signed-in Claude identity.
 - Claude Code CLI launches with a dedicated `CLAUDE_CONFIG_DIR` for each ClaudeSwitch account and the account's selected working directory.
 - Optional **Browser** action. It is hidden by default and can be enabled in Settings. It opens the user's existing browser profile and does not create independent browser sessions.
 - First-run welcome screen, account management, optional manual update checks, and privacy-safe diagnostics export.
@@ -45,7 +47,7 @@ The app is a menu-bar app. Click its menu-bar icon to open the account switcher;
 | CLI | Starts `claude` with an account-specific `CLAUDE_CONFIG_DIR` | Separate CLI configuration/auth context; authenticate each one |
 | Browser (optional) | Opens `claude.ai` in the selected browser | No; uses that browser profile's current login |
 
-ClaudeSwitch never reads, copies, exports or manages Claude passwords, cookies or tokens. Claude Code itself manages authentication inside each configuration directory.
+ClaudeSwitch never reads, copies, exports or manages Claude passwords, cookies or tokens. Desktop profile directories are created under `ClaudeSwitch/DesktopProfiles/<account-id>/` with owner-only directory permissions. Removing an account preserves its profile data. Claude Code itself manages authentication inside each configuration directory.
 
 ## Data and privacy
 
@@ -89,7 +91,7 @@ QA                                macOS beta test checklist
 
 ## Known limitations
 
-- Claude Desktop's account session is shared with the installed Desktop app. The Desktop button does not log out or switch identities.
+- Desktop isolation relies on Electron's `--user-data-dir` argument and must be validated against each Claude Desktop release. Process detection confirms profile association only, not the signed-in identity.
 - Browser mode uses the browser's current profile. It cannot keep two Claude logins independent inside one profile.
 - Claude Code CLI requires a working `claude` command in the user's Terminal PATH. Some shell environments may need PATH setup in the user's shell profile.
 - Terminal automation may trigger a macOS permission prompt. Company MDM policy can block Apple Events, unsigned apps or app installation.
