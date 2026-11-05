@@ -56,8 +56,8 @@ enum DesktopProfileDetector {
         }
 
         var matches: [UUID: [Int32]] = [:]
-        for line in listing.split(whereSeparator: \\.isNewline) {
-            let parts = line.split(maxSplits: 1, whereSeparator: \\.isWhitespace)
+        for line in listing.split(whereSeparator: \.isNewline) {
+            let parts = line.split(maxSplits: 1, whereSeparator: \.isWhitespace)
             guard parts.count == 2, let pid = Int32(parts[0]) else { continue }
             let command = String(parts[1])
             let lower = command.lowercased()
