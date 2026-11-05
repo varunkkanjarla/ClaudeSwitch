@@ -175,6 +175,7 @@ private struct AccountEditorView: View {
     @State private var icon: String
     @State private var color: String
     @State private var workingDirectory: String
+    @State private var useExistingSetup: Bool
     private let existing: ClaudeAccount?
 
     init(title: String, account: ClaudeAccount?, onSave: @escaping (ClaudeAccount) -> Void) {
@@ -185,6 +186,7 @@ private struct AccountEditorView: View {
         _icon = State(initialValue: account?.icon ?? "person.crop.circle.fill")
         _color = State(initialValue: account?.color ?? "#4F8CFF")
         _workingDirectory = State(initialValue: account?.workingDirectory ?? NSHomeDirectory())
+        _useExistingSetup = State(initialValue: account?.useExistingSetup ?? false)
     }
 
     var body: some View {
@@ -206,8 +208,11 @@ private struct AccountEditorView: View {
                 Spacer()
                 Button("Choose folder") { chooseWorkingDirectory() }
             }
+            Toggle("Use my existing Claude setup", isOn: $useExistingSetup)
+            Text(useExistingSetup ? "Desktop opens your normal profile and the CLI uses ~/.claude, with your current login, skills and settings." : "Desktop and the CLI use this account's own folders. Sign in separately on first use.")
+                .font(.caption).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
             HStack { Spacer(); Button("Cancel") { dismiss() }; Button("Save") {
-                let result = ClaudeAccount(id: existing?.id ?? UUID(), name: name, tag: tag, email: email, icon: icon, color: color, createdAt: existing?.createdAt ?? .now, workingDirectory: workingDirectory)
+                let result = ClaudeAccount(id: existing?.id ?? UUID(), name: name, tag: tag, email: email, icon: icon, color: color, createdAt: existing?.createdAt ?? .now, workingDirectory: workingDirectory, useExistingSetup: useExistingSetup)
                 onSave(result); dismiss()
             }.buttonStyle(.borderedProminent).disabled(name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty) }
         }.padding(24).frame(width: 460)

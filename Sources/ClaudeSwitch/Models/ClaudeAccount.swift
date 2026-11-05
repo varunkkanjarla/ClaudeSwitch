@@ -9,8 +9,10 @@ struct ClaudeAccount: Identifiable, Codable, Equatable {
     var color: String
     var createdAt: Date
     var workingDirectory: String
+    /// Uses the default Claude Desktop profile and ~/.claude instead of isolated per-account folders.
+    var useExistingSetup: Bool
 
-    init(id: UUID = UUID(), name: String, tag: String = "", email: String = "", icon: String = "person.crop.circle.fill", color: String = "#8B8B8B", createdAt: Date = .now, workingDirectory: String = NSHomeDirectory()) {
+    init(id: UUID = UUID(), name: String, tag: String = "", email: String = "", icon: String = "person.crop.circle.fill", color: String = "#8B8B8B", createdAt: Date = .now, workingDirectory: String = NSHomeDirectory(), useExistingSetup: Bool = false) {
         self.id = id
         self.name = name
         self.tag = tag
@@ -19,9 +21,10 @@ struct ClaudeAccount: Identifiable, Codable, Equatable {
         self.color = color
         self.createdAt = createdAt
         self.workingDirectory = workingDirectory
+        self.useExistingSetup = useExistingSetup
     }
 
-    private enum CodingKeys: String, CodingKey { case id, name, tag, email, icon, color, createdAt, workingDirectory, kind }
+    private enum CodingKeys: String, CodingKey { case id, name, tag, email, icon, color, createdAt, workingDirectory, useExistingSetup, kind }
 
     init(from decoder: Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
@@ -34,6 +37,7 @@ struct ClaudeAccount: Identifiable, Codable, Equatable {
         color = try c.decodeIfPresent(String.self, forKey: .color) ?? (legacyKind == "Work" ? "#4F8CFF" : "#A78BFA")
         createdAt = try c.decodeIfPresent(Date.self, forKey: .createdAt) ?? .now
         workingDirectory = try c.decodeIfPresent(String.self, forKey: .workingDirectory) ?? NSHomeDirectory()
+        useExistingSetup = try c.decodeIfPresent(Bool.self, forKey: .useExistingSetup) ?? false
     }
 
     func encode(to encoder: Encoder) throws {
@@ -46,5 +50,6 @@ struct ClaudeAccount: Identifiable, Codable, Equatable {
         try c.encode(color, forKey: .color)
         try c.encode(createdAt, forKey: .createdAt)
         try c.encode(workingDirectory, forKey: .workingDirectory)
+        try c.encode(useExistingSetup, forKey: .useExistingSetup)
     }
 }
