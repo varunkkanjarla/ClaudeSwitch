@@ -57,6 +57,13 @@ enum Launcher {
 
         do {
             let profileURL = try store.prepareDesktopProfileDirectory(for: account)
+            if let pid = try DesktopProfileDetector.runningProcessIDs([account.id: profileURL])[account.id]?.first,
+               let runningApp = NSRunningApplication(processIdentifier: pid) {
+                runningApp.activate(options: [.activateAllWindows, .activateIgnoringOtherApps])
+                store.updateStatus("Activated the already-running Desktop profile for " + account.name + ".")
+                runtime?.refresh()
+                return
+            }
             let configuration = NSWorkspace.OpenConfiguration()
             configuration.arguments = [
                 "--user-data-dir=" + profileURL.path,
